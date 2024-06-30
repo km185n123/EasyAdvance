@@ -1,0 +1,29 @@
+<!-- res/drawable/cloud_shape.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo de la nube -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="80dp" android:height="50dp" />
+        </shape>
+    </item>
+    <!-- Capas adicionales para darle forma de nube -->
+    <item android:top="20dp" android:left="30dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="60dp" android:height="40dp" />
+        </shape>
+    </item>
+    <item android:top="10dp" android:left="10dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="50dp" android:height="30dp" />
+        </shape>
+    </item>
+    <item android:top="20dp" android:left="60dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="40dp" android:height="20dp" />
+        </shape>
+    </item>
+</layer-list>
