@@ -25,8 +25,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -34,7 +36,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.paparazziapps.pretamistapp.helper.*
@@ -46,6 +50,10 @@ import com.paparazziapps.pretamistapp.modulos.clientes.views.adapter.ClientAdapt
 import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
+import generatePagaresPdfWithSignature
+import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class RegistrarActivity : AppCompatActivity() {
@@ -59,6 +67,7 @@ class RegistrarActivity : AppCompatActivity() {
     lateinit var fecha: TextInputEditText
     lateinit var layoutFecha: TextInputLayout
     lateinit var registerButton: MaterialButton
+    lateinit var pagareButton: MaterialButton
     lateinit var toolbar: Toolbar
     var fechaSelectedUnixtime: Long? = null
 
@@ -77,6 +86,7 @@ class RegistrarActivity : AppCompatActivity() {
 
     val listClients = arrayListOf<Client>()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrarBinding.inflate(layoutInflater)
@@ -85,6 +95,7 @@ class RegistrarActivity : AppCompatActivity() {
 
         fecha = binding.fecha
         registerButton = binding.registrarButton
+        pagareButton = binding.pagare
         toolbar = binding.tool.toolbar
 
         layoutFecha = binding.fechaLayout
@@ -108,10 +119,90 @@ class RegistrarActivity : AppCompatActivity() {
         showCalendar()
         setupSpinners()
         registerPrestamo()
+        sendPagare()
         setUpToolbarInitialize()
 
         //Observers
         startObservers()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun sendPagare() {
+        pagareButton.setOnClickListener {
+            prestamo?.let {
+                val deudor = "Jhon jeferson quevedo"
+                val acreedor = "${it.nombres} ${it.apellidos}"
+                val importe = it.montoTotalAPagar.toString()
+                val fechaEmision = getCurrentDate()
+                val fechaVencimiento = "${it.dias_restantes_por_pagar} despues de la fecha ${fechaEmision}"
+                val phoneNumber = it.celular  // Reemplaza con el número de teléfono deseado
+
+                /* generatePagaresPdf(
+                    this,
+                    "pagare.pdf",
+                    deudor,
+                    acreedor,
+                    importe,
+                    fechaEmision,
+                    fechaVencimiento
+                )*/
+
+                val signatureDialog = SignatureDialogFragment()
+                signatureDialog.show(this.supportFragmentManager, "signatureDialog")
+                signatureDialog.onDismissListener = object : SignatureDialogFragment.OnDismissListener {
+                    override fun onDismiss(signatureBitmap: Bitmap?) {
+                        if (signatureBitmap != null) {
+                            val pdfFile = generatePagaresPdfWithSignature(
+                                this@RegistrarActivity,
+                                "pagare.pdf",
+                                deudor,
+                                acreedor,
+                                importe,
+                                fechaEmision,
+                                fechaVencimiento,
+                                "Santiago de Queretaro",
+                                "calle 5 carrera 6",
+                                signatureBitmap
+                            )
+                            sendPdfViaWhatsApp(this@RegistrarActivity, pdfFile, phoneNumber.toString())
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDate(): String {
+        val currentDate = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return currentDate.format(formatter)
+    }
+
+    fun sendPdfViaWhatsApp(context: Context, file: File, phoneNumber: String) {
+        val uri = FileProvider.getUriForFile(
+            context,
+            context.applicationContext.packageName + ".provider",
+            file
+        )
+
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(
+                "jid",
+                "$phoneNumber@s.whatsapp.net"
+            ) // Número de teléfono con el formato internacional
+            setPackage("com.whatsapp")
+        }
+
+        try {
+            context.startActivity(sendIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "WhatsApp no está instalado.", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -289,8 +380,21 @@ class RegistrarActivity : AppCompatActivity() {
                 backgroundTintList = ContextCompat.getColorStateList(context, R.color.colorPrimary)
                 setTextColor(ContextCompat.getColor(context, R.color.white))
             }
+            pagareButton.apply {
+                isEnabled = true
+                backgroundTintMode = PorterDuff.Mode.SCREEN
+                backgroundTintList = ContextCompat.getColorStateList(context, R.color.colorPrimary)
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
         } else {
             registerButton.apply {
+                isEnabled = false
+                backgroundTintMode = PorterDuff.Mode.MULTIPLY
+                backgroundTintList =
+                    ContextCompat.getColorStateList(context, R.color.color_input_text)
+                setTextColor(ContextCompat.getColor(context, R.color.color_input_text))
+            }
+            pagareButton.apply {
                 isEnabled = false
                 backgroundTintMode = PorterDuff.Mode.MULTIPLY
                 backgroundTintList =

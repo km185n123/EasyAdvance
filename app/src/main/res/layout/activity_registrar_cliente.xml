@@ -162,7 +162,7 @@
                         android:hint="Celular"
                         android:inputType="number"
                         android:lines="1"
-                        android:maxLength="9" />
+                        android:maxLength="10" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 

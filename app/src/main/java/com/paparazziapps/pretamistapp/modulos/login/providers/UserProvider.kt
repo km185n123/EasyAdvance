@@ -30,4 +30,14 @@ class UserProvider {
     fun searchUserByEmail(email: String?): Task<DocumentSnapshot> {
         return mCollection.document(email!!).get()
     }
+
+    fun updateLocation(email: String, latitude: Double, longitude: Double): Task<Void> {
+        val updates = hashMapOf<String, Any>(
+            "latitude" to latitude,
+            "longitude" to longitude
+        )
+        return mCollection.document(email).update(updates)
+    }
+
+
 }

@@ -2,13 +2,14 @@ package com.paparazziapps.pretamistapp.modulos.principal.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
 import com.paparazziapps.pretamistapp.modulos.login.pojo.User
 import com.paparazziapps.pretamistapp.modulos.login.providers.LoginProvider
 import com.paparazziapps.pretamistapp.modulos.login.providers.UserProvider
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelRegistroUsuario
 
-class ViewModelPrincipal private constructor(){
+class ViewModelPrincipal : ViewModel() {
 
 
     var mUserProvider = UserProvider()
@@ -18,6 +19,7 @@ class ViewModelPrincipal private constructor(){
     private val _user = MutableLiveData<User>()
 
     private val _message = MutableLiveData<String>()
+    private val _locationUpdateSuccess = MutableLiveData<Boolean>()
 
     fun showMessage(): LiveData<String> {
         return _message
@@ -25,6 +27,14 @@ class ViewModelPrincipal private constructor(){
 
     fun getUser(): LiveData<User> {
         return _user
+    }
+
+    fun locationUpdateSuccess(): LiveData<Boolean> {
+        return _locationUpdateSuccess
+    }
+
+    fun getUserEmail(): String? {
+        return mAuth.getEmail()
     }
 
     fun searchUserByEmail() {
@@ -48,6 +58,15 @@ class ViewModelPrincipal private constructor(){
             }
         } catch (e: Exception) {
             _message.setValue(e.message)
+        }
+    }
+
+    fun updateUserLocation(email: String, latitude: Double, longitude: Double) {
+        mUserProvider.updateLocation(email, latitude, longitude).addOnSuccessListener {
+            _locationUpdateSuccess.value = true
+        }.addOnFailureListener { e ->
+            _message.value = e.message
+            _locationUpdateSuccess.value = false
         }
     }
 

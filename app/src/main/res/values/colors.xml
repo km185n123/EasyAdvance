@@ -10,8 +10,8 @@
     <color name="facebook_color_like">#0571ed</color>
 
     <!--Primary colors 3 colors-->
-    <color name="colorPrimary">#86cdc5</color>
-    <color name="colorSecondary">#4CAFF6</color>
+    <color name="colorPrimary">#156d4e</color>
+    <color name="colorSecondary">#ffcc4d</color>
     <color name="colorPrimaryLight">#cceefe</color>
     <color name="colorPrimaryDark">#89c8c3</color>
     <color name="colorThird">#FED1EF</color>
@@ -32,7 +32,7 @@
     <color name="color_input_hint">#626262</color>
     <color name="color_transparent">#00FFFFFF</color>
     <color name="color_line">#E7E7E7</color>
-    <color name="colorTransparent">#00FFFFFF</color>
+    <color name="colorTransparent">#00000000</color>
     <color name="color_text_web">#A0A0A0</color>
     <color name="color_fondo_pantalla">#F4F8F9</color>
 

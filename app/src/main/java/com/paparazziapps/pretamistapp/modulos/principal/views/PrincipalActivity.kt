@@ -1,44 +1,61 @@
 package com.paparazziapps.pretamistapp.modulos.principal.views
 
-import android.app.Activity
-import android.app.Application
+
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.View
-import android.view.animation.AccelerateInterpolator
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.common.base.Strings.isNullOrEmpty
 import com.paparazziapps.pretamistapp.R
 import com.paparazziapps.pretamistapp.databinding.ActivityPrincipalBinding
 import com.paparazziapps.pretamistapp.databinding.BottomsheetDetallePrestamoBinding
-import com.paparazziapps.pretamistapp.helper.*
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
-import com.google.common.base.Strings.isNullOrEmpty
-import com.paparazziapps.pretamistapp.helper.views.AppOpenAd
+import com.paparazziapps.pretamistapp.helper.INT_DEFAULT
+import com.paparazziapps.pretamistapp.helper.getDiasRestantesFromStart
+import com.paparazziapps.pretamistapp.helper.getDoubleWithTwoDecimals
+import com.paparazziapps.pretamistapp.helper.getFechaActualNormalInUnixtime
+import com.paparazziapps.pretamistapp.helper.replaceFirstCharInSequenceToUppercase
+import com.paparazziapps.pretamistapp.helper.standardSimpleButton
+import com.paparazziapps.pretamistapp.helper.standardSimpleButtonOutline
+import com.paparazziapps.pretamistapp.helper.standardSimpleButtonOutlineDisable
+import com.paparazziapps.pretamistapp.helper.tintDrawable
+import com.paparazziapps.pretamistapp.helper.toJson
 import com.paparazziapps.pretamistapp.helper.views.beGone
 import com.paparazziapps.pretamistapp.helper.views.beVisible
 import com.paparazziapps.pretamistapp.modulos.dashboard.views.HomeFragment.Companion.setOnClickedPrestamoHome
+import com.paparazziapps.pretamistapp.modulos.location.LocationManager
+import com.paparazziapps.pretamistapp.modulos.location.scheduleLocationUpdates
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
 import com.paparazziapps.pretamistapp.modulos.login.views.LoginActivity
 import com.paparazziapps.pretamistapp.modulos.principal.viewmodels.ViewModelPrincipal
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
-
 
 class PrincipalActivity : AppCompatActivity(){
     private lateinit var binding:ActivityPrincipalBinding
@@ -53,28 +70,121 @@ class PrincipalActivity : AppCompatActivity(){
     var _viewModelPrincipal = ViewModelPrincipal.getInstance()
     var _viewModelSucursales = ViewModelSucursales.getInstance()
 
+    private lateinit var locationManager: LocationManager
+
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         bottomNavigationView = binding.navView
-        toolbar              = binding.tool.toolbar
+        toolbar = binding.tool.toolbar
 
 
         MyPreferences().isLogin = true
         isFreeTrial()
         setUpInicialToolbar()
-        //testCrashlytics()
         _viewModelSucursales.getSucursales()
         observers()
 
-        /*val disappearView = DisappearView.attach(this)
-        disappearView.execute(binding.layoutBottomsheetDetallePrestamo.root,
-            duration = 4000,
-            interpolator = AccelerateInterpolator(0.5f),
-            needDisappear = true)*/
+        locationManager = LocationManager.getInstance(this)
+
+
+        // Verificar y solicitar permisos de ubicación si no están concedidos
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+        val isGPSEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+
+        if (!isGPSEnabled) {
+            showGPSDisabledDialog()
+        } else {
+            // Inicia el proceso de obtención de ubicación si el GPS está activado
+            requestLocationPermissionsAndStartUpdates()
+        }
+
+        _viewModelPrincipal.locationUpdateSuccess().observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Ubicación actualizada correctamente", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(this, "Error al actualizar la ubicación", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
+
+    private fun requestLocationPermissionsAndStartUpdates() {
+        // Aquí implementa la lógica para solicitar permisos y comenzar las actualizaciones de ubicación
+        // Ejemplo:
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Si los permisos están concedidos, programar actualizaciones de ubicación
+            scheduleLocationUpdates(this)
+        }
+    }
+
+    private fun showGPSDisabledDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("El GPS está desactivado. ¿Deseas activarlo?")
+            .setCancelable(false)
+            .setPositiveButton("Sí") { _, _ ->
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.cancel()
+
+                showGPSDisabledDialog()
+            }
+        val alert: AlertDialog = builder.create()
+        alert.show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, programar actualizaciones de ubicación
+                scheduleLocationUpdates(this)
+            } else {
+                // Permiso denegado, manejar la situación según sea necesario
+                showGPSDisabledDialog()
+            }
+        }
+    }
+
+    /*@RequiresApi(Build.VERSION_CODES.O)
+    private fun iniciarServiciosDeUbicacion() {
+        // Obtener ubicación actual
+        locationManager.getCurrentLocation(OnSuccessListener { location ->
+            location?.let {
+                Toast.makeText(this, "Lat: ${it.latitude}, Lon: ${it.longitude}", Toast.LENGTH_SHORT).show()
+            }
+        },this)
+
+        // Iniciar el servicio de ubicación
+        locationManager.startLocationService(this)
+
+        // Iniciar actualizaciones de ubicación con AlarmManager cada 30 segundos
+        locationManager.startLocationUpdates(this)
+    }*/
 
     private fun observers() {
 
@@ -129,9 +239,9 @@ class PrincipalActivity : AppCompatActivity(){
             val resouse = ContextCompat.getDrawable(this@PrincipalActivity, R.drawable.border_mask) as Drawable
             val customResource = tintDrawable(resouse, colorState)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                resouse.colorFilter = BlendModeColorFilter(ContextCompat.getColor(this@PrincipalActivity, R.color.red), BlendMode.SRC_ATOP)
+                resouse.colorFilter = BlendModeColorFilter(ContextCompat.getColor(this@PrincipalActivity, R.color.colorSecondary), BlendMode.COLOR)
             }else{
-                resouse.setColorFilter(ContextCompat.getColor(this@PrincipalActivity, R.color.red), PorterDuff.Mode.SRC_ATOP)
+                resouse.setColorFilter(ContextCompat.getColor(this@PrincipalActivity, R.color.colorSecondary), PorterDuff.Mode.SRC_ATOP)
             }
             background = customResource
 
@@ -175,7 +285,7 @@ class PrincipalActivity : AppCompatActivity(){
             if(getFechaActualNormalInUnixtime().minus(fecha7Dias) > 0)
             {
                 println("Fecha actual normal: ${getFechaActualNormalInUnixtime().minus(fecha7Dias)}")
-                binding.cortinaFreeTrial.beVisible()
+
             }
         }
 
@@ -425,12 +535,21 @@ class PrincipalActivity : AppCompatActivity(){
         }
 
         //Mostrar bottom sheet
-       binding.cortinaBottomSheet.isVisible = true
-       bottomSheetDetallePrestamo.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.cortinaBottomSheet.isVisible = true
+        bottomSheetDetallePrestamo.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun onDestroy() {
-        ViewModelPrincipal.destroyInstance()
         super.onDestroy()
+        // Detener el servicio de ubicación
+        locationManager.stopLocationService(this)
+
+        // Detener actualizaciones de ubicación con AlarmManager
+        locationManager.stopLocationUpdates(this)
     }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
+    }
+
 }

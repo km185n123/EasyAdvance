@@ -235,7 +235,7 @@ class RegistrarClienteActivity : AppCompatActivity() {
             !apellidos.text.toString().trim().isNullOrEmpty() &&
             apellidos.text.toString().trim().count() >= 4 &&
             !celular.text.toString().trim().isNullOrEmpty() &&
-            celular.text.toString().trim().count() == 9 &&
+            celular.text.toString().trim().count() == 10 &&
             !dni.text.toString().trim().isNullOrEmpty() &&
             dni.text.toString().trim()
                 .count() == resources.getInteger(R.integer.cantidad_documento_max)
