@@ -11,13 +11,11 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.paparazziapps.pretamistapp.modulos.location.geofence.GeofenceCallback
 import com.paparazziapps.pretamistapp.modulos.location.geofence.GeofenceProvider
 
-class GoogleGeofenceProvider(private val context: Context, private val googleMap: GoogleMap) : GeofenceProvider {
+class GoogleGeofenceProvider(private val context: Context) : GeofenceProvider {
     private val geofencingClient: GeofencingClient = LocationServices.getGeofencingClient(context)
     private var geofencePendingIntent: PendingIntent? = null
         private get() {
@@ -52,7 +50,6 @@ class GoogleGeofenceProvider(private val context: Context, private val googleMap
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent!!)
             .addOnSuccessListener {
                 callback!!.onGeofenceCreated(true)
-                drawGeofenceOnMap(center, radius) // Dibuja la geocerca en el mapa
                 checkLocation(center, radius, testLocation, callback)
             }
             .addOnFailureListener { e: Exception? ->
@@ -60,16 +57,6 @@ class GoogleGeofenceProvider(private val context: Context, private val googleMap
             }
     }
 
-    private fun drawGeofenceOnMap(center: LatLng, radius: Float) {
-        googleMap.addCircle(
-            CircleOptions()
-                .center(center)
-                .radius(radius.toDouble())
-                .strokeColor(0x80FF0000.toInt()) // Color del borde
-                .fillColor(0x44FF0000) // Color de relleno con transparencia
-                .strokeWidth(4f)
-        )
-    }
 
     private fun checkLocation(
         center: LatLng?,
@@ -87,5 +74,15 @@ class GoogleGeofenceProvider(private val context: Context, private val googleMap
         )
         val isInside = distance[0] <= radius
         callback!!.onLocationChecked(isInside)
+    }
+
+    override fun destroy() {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            geofencingClient.removeGeofences(geofencePendingIntent!!)
+                .addOnCompleteListener {
+                    geofencePendingIntent?.cancel()
+                    geofencePendingIntent = null
+                }
+        }
     }
 }

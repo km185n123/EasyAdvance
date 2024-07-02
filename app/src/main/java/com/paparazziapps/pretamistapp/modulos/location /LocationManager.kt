@@ -23,7 +23,6 @@ import com.google.android.gms.tasks.OnSuccessListener
 class LocationManager private constructor(val context: Context) {
 
     private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private var locationCallback: LocationCallback? = null
 
     companion object {
@@ -37,7 +36,7 @@ class LocationManager private constructor(val context: Context) {
         }
     }
 
-    fun getCurrentLocation(listener: OnSuccessListener<Location>, context: Context) {
+    fun getCurrentLocation(context: Context, callback: (Location?) -> Unit) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -46,16 +45,16 @@ class LocationManager private constructor(val context: Context) {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
+            // TODO: Consider calling ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
+            // public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            // grantResults) to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        fusedLocationClient.lastLocation.addOnSuccessListener(listener)
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            callback(location)
+        }
     }
 
     fun startLocationService(context: Context) {

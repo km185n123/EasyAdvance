@@ -54,8 +54,7 @@
                     app:rippleColor="@color/colorSecondary"
                     fab:fab_colorNormal="@color/white"
                     fab:fab_colorPressed="@color/black"
-                    fab:fab_icon="@drawable/gps"
-                    />
+                    fab:fab_icon="@drawable/gps" />
 
                 <toan.android.floatingactionmenu.FloatingActionButton
                     android:id="@+id/action_add"
@@ -100,7 +99,7 @@
             android:id="@+id/player_bottom_sheet_fragment"
             android:name="com.paparazziapps.pretamistapp.modulos.dashboard.views.PlayerToggleFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:behavior_hideable="false"
             app:behavior_peekHeight="100dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />

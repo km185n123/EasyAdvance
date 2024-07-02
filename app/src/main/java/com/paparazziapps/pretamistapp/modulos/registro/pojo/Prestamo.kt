@@ -30,6 +30,8 @@ data class Prestamo (
     var plazo_vto:Int?=null,
     @SerialName("coordenada")
     var coordenada:String? = null,
+    @SerialName("actual")
+    var actual:Boolean? = null,
 
     //Calcular dias retrasados y
     @SerialName("dias_restantes_por_pagar")

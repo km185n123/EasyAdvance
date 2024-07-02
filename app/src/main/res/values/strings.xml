@@ -31,6 +31,10 @@
 
     <string name="loading">Cargando...</string>
     <string name="logout">Cerrar Sessión</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txt_start_collection">Iniciar cobro</string>
+    <string name="txt_in_place">En sitio</string>
 
 
 </resources>

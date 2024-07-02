@@ -10,4 +10,5 @@ interface GeofenceProvider {
         testLocation: LatLng?,
         callback: GeofenceCallback?
     )
+    fun destroy()
 }

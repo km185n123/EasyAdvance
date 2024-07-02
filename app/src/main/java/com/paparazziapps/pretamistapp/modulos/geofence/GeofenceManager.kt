@@ -20,23 +20,11 @@ class GeofenceManager(geofenceProvider: GeofenceProvider) {
         callback: GeofenceCallback?
     ) {
         geofenceProvider.createGeofence(center, radius, testLocation, callback)
+    }
 
-       /* geofenceProvider.createGeofence(center, radius, null, object : GeofenceCallback {
-            override fun onGeofenceCreated(success: Boolean) {
-                // Manejar la creación de la geocerca
-                Toast.makeText(requireContext(), " // Manejar la creación de la geocerca", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onLocationChecked(isInside: Boolean) {
-                // Este método se puede ignorar en este contexto, ya que usaremos el callback de ubicación
-            }
-        })*/
-
-
-
-
-
-
+    fun destroy(
+    ) {
+        geofenceProvider.destroy()
     }
 }
 

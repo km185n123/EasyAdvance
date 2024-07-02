@@ -1,0 +1,51 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_collections"
+    app:startDestination="@id/startCollectionFragment">
+
+    <fragment
+        android:id="@+id/startCollectionFragment"
+        android:name="com.paparazziapps.pretamistapp.modulos.collection.StartCollectionFragment"
+        android:label="fragment_start_collection"
+        tools:layout="@layout/fragment_start_collection">
+        <action
+            android:id="@+id/action_startCollectionFragment_to_inProgressCollectionFragment"
+            app:destination="@id/inProgressCollectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/inProgressCollectionFragment"
+        android:name="com.paparazziapps.pretamistapp.modulos.collection.InProgressCollectionFragment"
+        android:label="fragment_in_progress_collection"
+        tools:layout="@layout/fragment_in_progress_collection">
+        <action
+            android:id="@+id/action_inProgressCollectionFragment_to_incidentManagementScreenFragment"
+            app:destination="@id/incidentManagementScreenFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/incidentManagementScreenFragment"
+        android:name="com.paparazziapps.pretamistapp.modulos.collection.IncidentManagementScreenFragment"
+        android:label="IncidentManagementScreenFragment">
+        <action
+            android:id="@+id/action_incidentManagementScreenFragment_to_feePaymentFragment"
+            app:destination="@id/feePaymentFragment" />
+        <action
+            android:id="@+id/action_feePaymentFragment_to_startCollectionFragment"
+            app:destination="@id/startCollectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/feePaymentFragment"
+        android:name="com.paparazziapps.pretamistapp.modulos.collection.FeePaymentFragment"
+        android:label="fragment_fee_payment"
+        tools:layout="@layout/fragment_fee_payment">
+        <action
+            android:id="@+id/action_feePaymentFragment_to_startCollectionFragment"
+            app:destination="@id/startCollectionFragment" />
+    </fragment>
+
+    <!-- Otros fragmentos y acciones aquí -->
+
+</navigation>

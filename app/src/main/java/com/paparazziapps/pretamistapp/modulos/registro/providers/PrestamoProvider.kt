@@ -1,7 +1,9 @@
 package com.paparazziapps.pretamistapp.modulos.registro.providers
 
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.QuerySnapshot
@@ -56,14 +58,23 @@ class PrestamoProvider {
         val map = mutableMapOf<String,Any?>()
         map.put("fechaUltimoPago",fecha)
         map.put("dias_restantes_por_pagar",diasRestantesPorPagar)
-        map.put("diasPagados",diasPagados)
+        map.put("diasPagados", diasPagados)
         return mCollectionPrestamo.document(id).update(map)
     }
 
     //No need superAdmin - or Adming to update
-    fun cerrarPrestamo(id: String):Task<Void> {
-        val map = mutableMapOf<String,Any?>()
-        map.put("state","CERRADO")
+    fun cerrarPrestamo(id: String): Task<Void> {
+        val map = mutableMapOf<String, Any?>()
+        map.put("state", "CERRADO")
         return mCollectionPrestamo.document(id).update(map)
+    }
+
+
+    fun getCurrentLoan(): Task<QuerySnapshot> {
+        println("Sucursal -- getPrestamos")
+        return mCollectionPrestamo
+            .whereEqualTo("actual", true)
+            .whereEqualTo("sucursalId", preferences.sucursalId)
+            .get()
     }
 }

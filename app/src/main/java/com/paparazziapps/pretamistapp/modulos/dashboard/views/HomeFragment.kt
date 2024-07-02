@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.paparazziapps.pretamistapp.R
@@ -69,6 +70,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
     private var testLocationMarker: Marker? = null
     private var geofenceCenter: LatLng? = null
     var _binding: FragmentHomeBinding? = null
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
     private val binding get() = _binding!!
 
     var preferences = MyPreferences()
@@ -108,8 +110,15 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
         observers()
         getInforUser()
         actionListening()
+
+        _binding?.let {
+            bottomSheetBehavior = BottomSheetBehavior.from(it.playerBottomSheetFragment)
+
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
         return view
     }
+
 
     private fun actionListening() {
         binding.actionLocation.setOnClickListener {
@@ -425,7 +434,6 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
                 it.setInfoWindowAdapter(CustomInfoWindowAdapter(layoutInflater))
 
-
                 val client = coordinates[0]
 
                 val lat = client.coordenada?.split(",")?.get(0)?.toDouble() ?: 0.0
@@ -453,7 +461,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
     }
 
     private fun createGeofence(geofenceCenter: LatLng) {
-        val geofenceProvider = GoogleGeofenceProvider(requireContext(), mMap)
+        val geofenceProvider = GoogleGeofenceProvider(requireContext())
         val geofenceManager = GeofenceManager(geofenceProvider)
 
         // Crear una geocerca y dibujarla en el mapa
@@ -478,7 +486,6 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                     // Este método se puede ignorar en este contexto, ya que usaremos el callback de ubicación
                 }
             })
-
     }
 
 
@@ -495,7 +502,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
             // Iniciar actualizaciones de ubicación
             locationManager?.startLocationUpdates { location ->
                 updateLocationOnMap(location)
-                checkLocationInGeofence(location)
+               // checkLocationInGeofence(location)
             }
 
         }
