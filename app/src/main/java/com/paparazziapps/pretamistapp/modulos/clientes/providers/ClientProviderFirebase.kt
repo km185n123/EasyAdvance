@@ -37,17 +37,9 @@ class ClientProvider {
 
     //Super admin -- implemented
     fun getClients(): Task<QuerySnapshot> {
-        return if (preferences.isSuperAdmin) {
-            println("Super admin -- getPrestamos")
-            mCollectionClient
-                .whereEqualTo("state", "ABIERTO")
-                .get()
-        } else {
-            println("Sucursal -- getPrestamos")
-            mCollectionClient
+        return mCollectionClient
                 .whereEqualTo("sucursalId", preferences.sucursalId)
                 .get()
-        }
     }
 
     fun getClient(dni: String): Task<QuerySnapshot> {
