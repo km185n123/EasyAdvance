@@ -1,96 +1,76 @@
 package com.paparazziapps.pretamistapp.helper;
 
-import android.content.Context;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
-import java.security.KeyStore;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-public class NoSSLv3SocketFactory extends SSLSocketFactory {
 
-    private final SSLSocketFactory delegate;
+public class HttpsTrustManager implements X509TrustManager {
 
-    public NoSSLv3SocketFactory(Context context) throws IOException {
+    private static TrustManager[] trustManagers;
+    private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
+
+    @Override
+    public void checkClientTrusted(
+            java.security.cert.X509Certificate[] x509Certificates, String s)
+            throws java.security.cert.CertificateException {
+
+    }
+
+    @Override
+    public void checkServerTrusted(
+            java.security.cert.X509Certificate[] x509Certificates, String s)
+            throws java.security.cert.CertificateException {
+
+    }
+
+    public boolean isClientTrusted(X509Certificate[] chain) {
+        return true;
+    }
+
+    public boolean isServerTrusted(X509Certificate[] chain) {
+        return true;
+    }
+
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return _AcceptedIssuers;
+    }
+
+    public static void allowAllSSL() {
         try {
-            // Cargar el certificado desde res/raw
-            InputStream inputStream = context.getAssets().open("cert.pem");
-            X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(inputStream);
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
 
-            // Crear un almacén de claves que contenga el certificado
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("server_cert", certificate);
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
 
-            // Crear un administrador de confianza con el almacén de claves cargado
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keyStore);
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
 
-            // Obtener el administrador de confianza X509
-            X509TrustManager trustManager = getTrustManager(trustManagerFactory);
-
-            // Crear un contexto SSL personalizado con el administrador de confianza
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{trustManager}, null);
-
-            // Obtener la fábrica de socket SSL del contexto SSL personalizado
-            this.delegate = sslContext.getSocketFactory();
-        } catch (Exception e) {
-            throw new IOException("Error initializing SSL context", e);
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String arg0, SSLSession arg1) {
+                    return true;
+                }
+            });
+        } catch (Exception ignored) {
         }
-    }
-
-    private X509TrustManager getTrustManager(TrustManagerFactory trustManagerFactory) {
-        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        for (TrustManager trustManager : trustManagers) {
-            if (trustManager instanceof X509TrustManager) {
-                return (X509TrustManager) trustManager;
-            }
-        }
-        throw new IllegalStateException("No X509TrustManager found");
-    }
-
-    @Override
-    public String[] getDefaultCipherSuites() {
-        return delegate.getDefaultCipherSuites();
-    }
-
-    @Override
-    public String[] getSupportedCipherSuites() {
-        return delegate.getSupportedCipherSuites();
-    }
-
-    @Override
-    public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
-        return delegate.createSocket(s, host, port, autoClose);
-    }
-
-    @Override
-    public Socket createSocket(String host, int port) throws IOException {
-        return delegate.createSocket(host, port);
-    }
-
-    @Override
-    public Socket createSocket(String host, int port, java.net.InetAddress localHost, int localPort) throws IOException {
-        return delegate.createSocket(host, port, localHost, localPort);
-    }
-
-    @Override
-    public Socket createSocket(java.net.InetAddress host, int port) throws IOException {
-        return delegate.createSocket(host, port);
-    }
-
-    @Override
-    public Socket createSocket(java.net.InetAddress address, int port, java.net.InetAddress localAddress, int localPort) throws IOException {
-        return delegate.createSocket(address, port, localAddress, localPort);
     }
 }

@@ -1,14 +1,11 @@
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
-import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.LottieDrawable
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import com.google.gson.Gson
 import com.paparazziapps.pretamistapp.R
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 
 class CustomInfoWindowAdapter(private val inflater: LayoutInflater) : GoogleMap.InfoWindowAdapter {
 
@@ -32,9 +29,9 @@ class CustomInfoWindowAdapter(private val inflater: LayoutInflater) : GoogleMap.
         // Configurar los valores de la burbuja
 
 
-        val client = Gson().fromJson(marker.title, Prestamo::class.java)
-        titleView.text = "${client.nombres} ${client.apellidos}"
-        snippetView.text = client.fechaUltimoPago
+        val client = Gson().fromJson(marker.title, Credit::class.java)
+       /* titleView.text = "${client.nombres} ${client.apellidos}"
+        snippetView.text = client.fechaUltimoPago*/
         // Aquí puedes configurar la imagen como prefieras, por ejemplo, usando una URL con una librería como Glide
         // Glide.with(view.context).load(url).into(imageView)
 

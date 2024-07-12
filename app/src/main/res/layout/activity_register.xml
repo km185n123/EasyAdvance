@@ -223,7 +223,7 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cortinaLayout"
+        android:id="@+id/layout_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#dcffffff"
@@ -233,7 +233,7 @@
         android:visibility="gone" >
 
         <ProgressBar
-            android:id="@+id/progressbar_change_user"
+            android:id="@+id/progress_bar_change_user"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerInParent="true"
@@ -244,7 +244,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
         <View
-            android:id="@+id/view_agenda_docentes"
+            android:id="@+id/view_agenda_teachers"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_centerInParent="true"
@@ -260,7 +260,7 @@
             android:layout_height="25dp"
             android:text="@string/loading"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/progressbar_change_user"
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar_change_user"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_width="match_parent"/>

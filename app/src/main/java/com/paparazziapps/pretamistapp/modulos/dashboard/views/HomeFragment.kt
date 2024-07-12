@@ -8,7 +8,6 @@ import android.content.Intent
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -40,7 +39,7 @@ import com.paparazziapps.pretamistapp.helper.fromHtml
 import com.paparazziapps.pretamistapp.helper.fromJson
 import com.paparazziapps.pretamistapp.helper.getFechaActualNormalCalendar
 import com.paparazziapps.pretamistapp.helper.replaceFirstCharInSequenceToUppercase
-import com.paparazziapps.pretamistapp.helper.showMessageAboveMenuInferiorGlobal
+import com.paparazziapps.pretamistapp.helper.showMessageAboveBottomMenuGlobal
 import com.paparazziapps.pretamistapp.modulos.clientes.views.RegistrarClienteActivity
 import com.paparazziapps.pretamistapp.modulos.dashboard.adapters.PrestamoAdapter
 import com.paparazziapps.pretamistapp.modulos.dashboard.interfaces.setOnClickedPrestamo
@@ -49,12 +48,11 @@ import com.paparazziapps.pretamistapp.modulos.geofence.GeofenceManager
 import com.paparazziapps.pretamistapp.modulos.geofence.GoogleGeofenceProvider
 import com.paparazziapps.pretamistapp.modulos.location.LocationManager
 import com.paparazziapps.pretamistapp.modulos.location.geofence.GeofenceCallback
-import com.paparazziapps.pretamistapp.modulos.location.geofence.GeofenceProvider
 import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.pojo.User
 import com.paparazziapps.pretamistapp.modulos.principal.viewmodels.ViewModelPrincipal
 import com.paparazziapps.pretamistapp.modulos.principal.views.PrincipalActivity
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziapps.pretamistapp.modulos.registro.pojo.TypePrestamo
 import com.paparazziapps.pretamistapp.modulos.registro.viewmodels.ViewModelRegister
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
@@ -80,7 +78,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
     //constructores
     val prestamoAdapter = PrestamoAdapter(this)
 
-    val coordenadas = arrayListOf<Prestamo>()
+    val coordenadas = arrayListOf<Credit>()
 
     private lateinit var recyclerPrestamos: RecyclerView
 
@@ -194,7 +192,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
         _viewModel.receivePrestamos().observe(viewLifecycleOwner, Observer(::updatePrestamos))
     }
 
-    fun updatePrestamos(prestamosAll: MutableList<Prestamo>) {
+    fun updatePrestamos(prestamosAll: MutableList<Credit>) {
         if (prestamosAll.isEmpty()) {
             binding.emptyPrestamo.isVisible = true
             recyclerPrestamos.isVisible = false
@@ -211,10 +209,10 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                     prestamoAdapter.setData(prestamosAll)
                 } else {
                     try {
-                        val newPrestamos = mutableListOf<Prestamo>()
+                        val newPrestamos = mutableListOf<Credit>()
                         val localSucursales = fromJson<List<Sucursales>>(sucurs)
                         localSucursales.forEach { sucurlocal ->
-                            val item = Prestamo(
+                            val item = Credit(
                                 type = TypePrestamo.TITLE.value,
                                 title = sucurlocal.name
                             )
@@ -241,7 +239,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
         }
     }
 
-    private fun updateListLocation(prestamosAll: MutableList<Prestamo>) {
+    private fun updateListLocation(prestamosAll: MutableList<Credit>) {
         coordenadas.clear()
         prestamosAll.forEach {
             coordenadas.add(it)
@@ -264,7 +262,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
     }
 
     private fun showMessage(message: String) {
-        showMessageAboveMenuInferiorGlobal(message, binding.coordinator)
+        showMessageAboveBottomMenuGlobal(message, binding.coordinator)
     }
 
 
@@ -285,7 +283,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
     //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Metodos override
     override fun actualizarPagoPrestamo(
-        prestamo: Prestamo,
+        prestamo: Credit,
         needUpdate: Boolean,
         montoTotalAPagar: Double,
         adapterPosition: Int,
@@ -308,7 +306,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
     @SuppressLint("SetTextI18n", "InflateParams")
     override fun openDialogoActualizarPrestamo(
-        prestamo: Prestamo,
+        credit: Credit,
         montoTotalAPagar: Double,
         adapterPosition: Int,
         diasRestantesPorPagar: Int,
@@ -330,15 +328,15 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
         if (isClosed) {
             title.text = "¿Estas seguro de cerrar el préstamo?"
             desc.text =
-                ("Se cerrára el préstamo de: <b>${replaceFirstCharInSequenceToUppercase(prestamo.nombres.toString())}, ${
-                    replaceFirstCharInSequenceToUppercase(prestamo.apellidos.toString())
+                ("Se cerrára el préstamo de: <b>${replaceFirstCharInSequenceToUppercase("julian")}, ${
+                    replaceFirstCharInSequenceToUppercase("lopezx castellanos")
                 }").fromHtml()
 
         } else {
             title.text = "¿Estas seguro de actualizar la deuda?"
             desc.text =
-                ("Se actualizará la deuda de: <b>${replaceFirstCharInSequenceToUppercase(prestamo.nombres.toString())}, ${
-                    replaceFirstCharInSequenceToUppercase(prestamo.apellidos.toString())
+                ("Se actualizará la deuda de: <b>${replaceFirstCharInSequenceToUppercase("julian")}, ${
+                    replaceFirstCharInSequenceToUppercase("lopezcastellanos")
                 } </b>" +
                         ",con un monto total a pagar de: <br><b>${getString(R.string.tipo_moneda)}${montoTotalAPagar}<b>").fromHtml()
         }
@@ -373,7 +371,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                 dialog.dismiss()
 
                 if (isClosed) {
-                    _viewModel.cerrarPrestamo(prestamo.id) { isCorrect, msj, result, isRefresh ->
+                    _viewModel.cerrarPrestamo(credit.id) { isCorrect, msj, result, isRefresh ->
                         if (isCorrect) {
                             prestamoAdapter.removeItem(adapterPosition)//remover item de  local recycler View
                             showMessage(msj)
@@ -385,7 +383,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                     }
                 } else {
                     _viewModel.updateUltimoPago(
-                        prestamo.id,
+                        credit.id,
                         getFechaActualNormalCalendar(),
                         montoTotalAPagar,
                         diasRestantesPorPagar,
@@ -393,13 +391,13 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                     ) { isCorrect, msj, result, isRefresh ->
 
                         if (isCorrect) {
-                            prestamo.fechaUltimoPago = getFechaActualNormalCalendar()
-                            prestamo.dias_restantes_por_pagar = diasRestantesPorPagar
-                            prestamo.diasPagados = diasPagados
+                            credit.lastPaymentDate = getFechaActualNormalCalendar()
+                            credit.daysRemainingToPay = diasRestantesPorPagar.toString()
+                            credit.daysPaid = diasPagados.toString()
                             //(context as PrincipalActivity).showCortinaPrincipal(false)
                             prestamoAdapter.updateItem(
                                 adapterPosition,
-                                prestamo
+                                credit
                             )//Actualizar local recycler View
                             showMessage(msj)
 
@@ -427,7 +425,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
     // Método para agregar marcadores en el mapa
 
 
-    fun updateMapWithCoordinates(coordinates: ArrayList<Prestamo>) {
+    fun updateMapWithCoordinates(coordinates: ArrayList<Credit>) {
         if (::mMap.isInitialized) {
             mMap.let {
 
@@ -436,7 +434,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
                 val client = coordinates[0]
 
-                val lat = client.coordenada?.split(",")?.get(0)?.toDouble() ?: 0.0
+              /*  val lat = client.coordenada?.split(",")?.get(0)?.toDouble() ?: 0.0
                 val long = client.coordenada?.split(",")?.get(1)?.toDouble() ?: 0.0
                 val latLng = LatLng(lat, long)
 
@@ -453,7 +451,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
                 if (coordinates.isNotEmpty()) {
                     it.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                }
+                }*/
 
 
             }

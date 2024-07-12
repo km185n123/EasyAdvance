@@ -8,7 +8,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 
-class ClientProvider {
+class ClientProviderFirebase {
 
     var preferences = MyPreferences()
 

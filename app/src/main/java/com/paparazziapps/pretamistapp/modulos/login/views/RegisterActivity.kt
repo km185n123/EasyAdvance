@@ -286,9 +286,9 @@ class RegisterActivity : AppCompatActivity() {
         _viewModelRegistro.getIsLoading().observe(this) { isLoading ->
             Log.e("ISLOADING", "ISLOADING:$isLoading")
             if (isLoading) {
-                binding.cortinaLayout.visibility = View.VISIBLE
+                binding.layoutLoading.visibility = View.VISIBLE
             } else {
-                binding.cortinaLayout.visibility = View.GONE
+                binding.layoutLoading.visibility = View.GONE
             }
         }
 

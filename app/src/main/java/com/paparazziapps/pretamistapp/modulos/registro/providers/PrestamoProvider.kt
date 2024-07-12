@@ -1,13 +1,11 @@
 package com.paparazziapps.pretamistapp.modulos.registro.providers
 
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.QuerySnapshot
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 
 class PrestamoProvider {
@@ -30,7 +28,7 @@ class PrestamoProvider {
     }
 
     //Super admin -- implemented
-    fun create(prestamo: Prestamo, idSucursal:Int): Task<Void> {
+    fun create(prestamo: Credit, idSucursal:Int): Task<Void> {
         prestamo.sucursalId = if(preferences.isSuperAdmin) idSucursal else  preferences.sucursalId
         prestamo.id = mCollectionPrestamo.document().id
         return mCollectionPrestamo.document(prestamo.id!!).set(prestamo)

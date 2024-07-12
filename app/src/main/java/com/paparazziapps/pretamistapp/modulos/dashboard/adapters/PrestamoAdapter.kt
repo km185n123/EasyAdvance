@@ -1,12 +1,7 @@
 package com.paparazziapps.pretamistapp.modulos.dashboard.adapters
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Intent
-import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Handler
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.cardview.widget.CardView
@@ -20,14 +15,14 @@ import com.paparazziapps.pretamistapp.databinding.ContentPrestamoBinding
 import com.paparazziapps.pretamistapp.databinding.ContentTitlePrestamoBinding
 import com.paparazziapps.pretamistapp.helper.*
 import com.paparazziapps.pretamistapp.modulos.dashboard.interfaces.setOnClickedPrestamo
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziapps.pretamistapp.modulos.registro.pojo.TypePrestamo
 import java.text.SimpleDateFormat
 import java.util.*
 
 class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var prestamosList: MutableList<Prestamo> = mutableListOf()
+    var prestamosList: MutableList<Credit> = mutableListOf()
     var fechaActual:String
     //Time peru [Tiempo Actual]
     var fecha = SimpleDateFormat("dd/MM/yyyy").apply {
@@ -37,12 +32,12 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
         }
     }
 
-    fun setData(listPrestamos: MutableList<Prestamo>) {
+    fun setData(listPrestamos: MutableList<Credit>) {
         prestamosList = listPrestamos
         notifyDataSetChanged()
     }
 
-    fun updateItem(position: Int, prestamo: Prestamo) {
+    fun updateItem(position: Int, prestamo: Credit) {
         prestamosList.set(position,prestamo)
         notifyItemChanged(position)
     }
@@ -80,7 +75,7 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
 
     interface PrestamoViewHolder {
         fun bindView(
-            item: Prestamo,
+            item: Credit,
             fechaActual: String,
             setOnClickedPrestamo: setOnClickedPrestamo
         )
@@ -91,7 +86,7 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
         val binding = ContentPrestamoBinding.bind(itemView)
 
         override fun bindView(
-            item: Prestamo,
+            item: Credit,
             fechaActual: String,
             setOnClickedPrestamo: setOnClickedPrestamo
         ) {
@@ -115,12 +110,13 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
                         try {
                             //calcular el monto total a pagar
                             diasRetraso = numero_dias_retrasados.text.toString().toInt()
-                            montoTotalAPagar = getDoubleWithOneDecimalsReturnDouble((diasRetraso * item.montoDiarioAPagar!!))
+                           // montoTotalAPagar = getDoubleWithOneDecimalsReturnDouble((diasRetraso * item.dailyAmountPay!!))
+                            montoTotalAPagar = 1.0
 
                             //Mensaje
                             var msj = "Hola *${nombreCompleto.text}*, te escribimos para recordarte que tienes *${diasRetraso} ${lblDiasRetrasados.text}* " +
                                     "con los pagos de tu préstamo con un monto total a pagar de: *${context.getString(R.string.tipo_moneda)}$montoTotalAPagar*"
-                            openWhatsapp(item.celular, msj)
+                           // openWhatsapp(item.celular, msj)
                         }catch (t:Throwable) {
                             Firebase.crashlytics.recordException(t)
                         }
@@ -128,14 +124,16 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
                     }
                 }
                 //Asignar datos iniciales
-                telefono.setText(item.celular)
-                nombreCompleto.setText("${replaceFirstCharInSequenceToUppercase(item.nombres.toString().trim())}, ${replaceFirstCharInSequenceToUppercase(item.apellidos.toString().trim())}")
+              //  telefono.setText(item.celular)
+                //nombreCompleto.setText("${replaceFirstCharInSequenceToUppercase(item.nombres.toString().trim())}, ${replaceFirstCharInSequenceToUppercase(item.apellidos.toString().trim())}")
+                nombreCompleto.setText("${replaceFirstCharInSequenceToUppercase("nombre")}, ${replaceFirstCharInSequenceToUppercase("apellido")}")
 
                 //Actualizar Pago al hacer click al itemview
                 setOnClickListener {
                     //calcular el monto total a pagar
                     diasRetraso = numero_dias_retrasados.text.toString().toInt()
-                    montoTotalAPagar = getDoubleWithTwoDecimalsReturnDouble(diasRetraso * (item.capital?.toDouble()?.div(item.plazo_vto!!)!!))
+                   // montoTotalAPagar = getDoubleWithTwoDecimalsReturnDouble(diasRetraso * (item.capital?.toDouble()?.div(item.plazo_vto!!)!!))
+                    montoTotalAPagar = 1.0
 
                     if(numero_dias_retrasados.text.toString().toInt() == 0) {
                         println("numero de dias retrasados es cero: ${numero_dias_retrasados.text}")
@@ -153,12 +151,13 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
             setDiasRestantesPorPagar(item)
         }
 
-        private fun setDiasRestantesPorPagar(item: Prestamo) {
+        private fun setDiasRestantesPorPagar(item: Credit) {
 
             val lblDiasPorPagar = binding.lblDiasPorPagar
             val numeroDiasPorPagar = binding.numeroDiasPorPagar
 
-            var diasEnQueTermina = getDiasRestantesFromStart(item.fecha?:"",item.plazo_vto?:0)
+           // var diasEnQueTermina = getDiasRestantesFromStart(item.fecha?:"",item.plazo_vto?:0)
+            var diasEnQueTermina = getDiasRestantesFromStart("7/07/2024",0)
 
             if(diasEnQueTermina < 0)
             {
@@ -198,17 +197,17 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
         private fun calcularDiasRetrasados(
             itemView: View,
             diasRetrasados: MaterialTextView,
-            item: Prestamo,
+            item: Credit,
             diasRetrasadosCardview: CardView,
             fechaActual: String
         ) {
 
-            println("Adapter ----> Nombres:${item.nombres} --- Apellidos: ${item.apellidos} --- Fecha actual:${fechaActual} ----> Fecha registrada: ${item.fecha}")
+            //println("Adapter ----> Nombres:${item.nombres} --- Apellidos: ${item.apellidos} --- Fecha actual:${fechaActual} ----> Fecha registrada: ${item.fecha}")
 
-            if(item.fechaUltimoPago != null)
+            if(item.lastPaymentDate != null)
             {
                 //Obtener dias restantes si ya esta pagando diariamente ---> de los pagos actualizados
-                getDiasRestantesFromDateToNowMinusDiasPagados(item.fecha?:"",item.diasPagados?:0).apply {
+                getDiasRestantesFromDateToNowMinusDiasPagados(item.endTime?:"",item.daysPaid?.toInt()?:0).apply {
 
                     if(this.toInt() <= 0 )
                     {
@@ -232,7 +231,7 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
             {
                 //Calcular la fecha con el ultimo dia
                 //Restar unixtime y obtener los dias restantes
-                getDiasRestantesFromDateToNow(item.fecha?:"").apply {
+                getDiasRestantesFromDateToNow(item.endTime?:"").apply {
                     diasRetrasados.setText(this)
                     if(this.toInt() == 0)
                     {
@@ -267,7 +266,7 @@ class PrestamoAdapter(var setOnClickedPrestamo: setOnClickedPrestamo) : Recycler
         val binding = ContentTitlePrestamoBinding.bind(itemView)
 
         override fun bindView(
-            item: Prestamo,
+            item: Credit,
             fechaActual: String,
             setOnClickedPrestamo: setOnClickedPrestamo
         ) {

@@ -26,7 +26,6 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.graphics.drawable.DrawableCompat
@@ -270,7 +269,7 @@ fun getColorWithAlpha(color: Int, ratio: Float): Int {
 
 //Global Methods
 
-fun showMessageAboveMenuInferiorGlobal(message: String?, view:CoordinatorLayout) {
+fun showMessageAboveBottomMenuGlobal(message: String?, view:CoordinatorLayout) {
     Snackbar.make(view,"$message", Snackbar.LENGTH_SHORT).apply {
         view.elevation = 1000F
     }.show()

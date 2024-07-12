@@ -21,7 +21,7 @@
                 layout="@layout/toolbar_child"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/linearLayoutTop"
+                android:id="@+id/layout_linear_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -74,7 +74,7 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/get_dniLayout"
+                    android:id="@+id/layout_dni"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/sucursal_txt_input_lyt">
 
                     <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:id="@+id/dni_client"
+                        android:id="@+id/auto_complete_client"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Clientes"
@@ -114,9 +114,9 @@
                     app:endIconDrawable="@drawable/ic_calendar"
                     app:endIconMode="custom"
                     app:errorEnabled="true"
-                    app:layout_constraintEnd_toEndOf="@+id/get_dniLayout"
-                    app:layout_constraintStart_toStartOf="@+id/get_dniLayout"
-                    app:layout_constraintTop_toBottomOf="@+id/get_dniLayout">
+                    app:layout_constraintEnd_toEndOf="@+id/layout_dni"
+                    app:layout_constraintStart_toStartOf="@+id/layout_dni"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_dni">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fecha"
@@ -133,7 +133,7 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/interesLayout"
+                    android:id="@+id/layout_interest"
                     style="@style/CustomTextField"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -168,10 +168,10 @@
                     android:layout_height="0dp"
                     android:layout_marginBottom="18dp"
                     android:background="@drawable/background_input_disable"
-                    app:layout_constraintLeft_toLeftOf="@+id/interesLayout"
-                    app:layout_constraintRight_toRightOf="@+id/interesLayout"
-                    app:layout_constraintTop_toTopOf="@+id/interesLayout"
-                    app:layout_constraintBottom_toBottomOf="@+id/interesLayout"
+                    app:layout_constraintLeft_toLeftOf="@+id/layout_interest"
+                    app:layout_constraintRight_toRightOf="@+id/layout_interest"
+                    app:layout_constraintTop_toTopOf="@+id/layout_interest"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_interest"
                     />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -187,7 +187,7 @@
                     android:layout_marginLeft="10dp"
                     app:errorEnabled="true"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/interesLayout"
+                    app:layout_constraintStart_toEndOf="@+id/layout_interest"
                     app:layout_constraintTop_toBottomOf="@+id/fechaLayout">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -231,7 +231,7 @@
                     android:focusable="false"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/interesLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/layout_interest">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/capital"
@@ -261,7 +261,7 @@
 
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/pagare"
+                    android:id="@+id/button_send_promissory_note"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:enabled="false"
@@ -285,7 +285,7 @@
                     android:background="@drawable/corner_boton_outline"
                     app:backgroundTint="@color/color_input_text"
                     android:text="Registrar"
-                    app:layout_constraintTop_toBottomOf="@+id/pagare"
+                    app:layout_constraintTop_toBottomOf="@+id/button_send_promissory_note"
                     style="?android:textAppearanceSmall"/>
 
 

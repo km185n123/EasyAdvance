@@ -21,7 +21,7 @@
                 layout="@layout/toolbar_child"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/linearLayoutTop"
+                android:id="@+id/layout_linear_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"

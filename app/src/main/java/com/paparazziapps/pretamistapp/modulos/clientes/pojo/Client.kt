@@ -25,6 +25,10 @@ data class Client (
     var direccion2:String? = null,
     @SerialName("coordenada")
     var coordenada:String? = null,
+    @SerialName("ocupation")
+    var ocupation:String? = null,
+    @SerialName("business_name")
+    var businessName:String? = null,
 
     //Sucursal
     @SerialName("sucursalId")

@@ -9,7 +9,7 @@
     <integer name="cantidad_documento_max">8</integer>
     <string name="tipo_moneda">S./ </string>
     <string name="tipo_moneda_defecto">S./ 1000</string>
-    <string name="tipo_moneda_defecto_cero">S./ 0</string>
+    <string name="tipo_moneda_default_zero">S./ 0</string>
 
     <string name="documento_vacío">DNI vacío</string>
     <string name="documento_incompleto">DNI incompleto</string>
@@ -35,6 +35,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txt_start_collection">Iniciar cobro</string>
     <string name="txt_in_place">En sitio</string>
-
+    <string name="formatted_amount">%1$s %2$s</string>
 
 </resources>

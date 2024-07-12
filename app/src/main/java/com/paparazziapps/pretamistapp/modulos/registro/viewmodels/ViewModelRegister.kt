@@ -3,8 +3,7 @@ package com.paparazziapps.pretamistapp.modulos.registro.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.paparazziapps.pretamistapp.helper.getDoubleWithOneDecimalsReturnDouble
-import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziapps.pretamistapp.modulos.registro.providers.PrestamoProvider
 import java.lang.Exception
 
@@ -18,12 +17,12 @@ open class ViewModelRegister private constructor(){
         return  _message
     }
 
-    fun getMontoDiario() : LiveData<Double>
+    fun getDailyAmount() : LiveData<Double>
     {
         return _montoDiario
     }
 
-    fun calcularMontoDiario(capital:Int, interes:Int, dias:Int)
+    fun calculateDailyAmount(capital:Int, interes:Int, dias:Int)
     {
         try {
             var newCapital = capital.toDouble()
@@ -39,7 +38,7 @@ open class ViewModelRegister private constructor(){
         }
     }
 
-    fun createPrestamo(prestamo: Prestamo, idSucursal:Int, onComplete: (Boolean, String, String?, Boolean) -> Unit)
+    fun createPrestamo(prestamo: Credit, idSucursal:Int, onComplete: (Boolean, String, String?, Boolean) -> Unit)
     {
         var isCorrect = false
         try {

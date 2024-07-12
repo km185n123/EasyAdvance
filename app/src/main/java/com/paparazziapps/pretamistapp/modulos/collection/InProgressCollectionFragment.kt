@@ -57,11 +57,12 @@ class InProgressCollectionFragment : Fragment() {
 
         observers()
         _binding?.btnInPlace?.setOnClickListener {
-            locationManager?.getCurrentLocation(requireContext()) { location ->
+            findNavController().navigate(R.id.action_inProgressCollectionFragment_to_incidentManagementScreenFragment)
+            /*locationManager?.getCurrentLocation(requireContext()) { location ->
                 location?.let {
                     checkLocationInGeofence(LatLng(location.latitude,location.longitude))
                 }
-            }
+            }*/
         }
 
 
@@ -70,7 +71,7 @@ class InProgressCollectionFragment : Fragment() {
     }
 
     private fun observers() {
-        viewModel?.currentLoan?.observe(viewLifecycleOwner) { client ->
+       /* viewModel?.currentLoan?.observe(viewLifecycleOwner) { client ->
             if (client != null) {
                 val lat = client.coordenada?.split(",")?.get(0)?.toDouble() ?: 0.0
                 val long = client.coordenada?.split(",")?.get(1)?.toDouble() ?: 0.0
@@ -85,7 +86,7 @@ class InProgressCollectionFragment : Fragment() {
                     Toast.LENGTH_LONG
                 ).show()
             }
-        }
+        }*/
     }
 
     override fun onDestroyView() {

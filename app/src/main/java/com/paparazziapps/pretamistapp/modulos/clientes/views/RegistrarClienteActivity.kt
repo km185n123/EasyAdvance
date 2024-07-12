@@ -1,5 +1,6 @@
 package com.paparazziapps.pretamistapp.modulos.clientes.views
 
+import ClientsViewModel
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -33,15 +34,14 @@ import com.paparazziapps.pretamistapp.helper.hideKeyboardActivity
 import com.paparazziapps.pretamistapp.helper.setMaxLength
 import com.paparazziapps.pretamistapp.helper.views.beVisible
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.clientes.viewmodels.ClientsViewModel
+import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
 import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 
-
 class RegistrarClienteActivity : AppCompatActivity() {
 
-    val _viewModel = ClientsViewModel.getInstance()
+    val _viewModel = ClientsViewModel.getInstance(clientProvider = ClientProviderFirebase())
     var _viewModelSucursales = ViewModelSucursales.getInstance()
 
     lateinit var binding: ActivityRegistrarClienteBinding
@@ -135,7 +135,7 @@ class RegistrarClienteActivity : AppCompatActivity() {
     }
 
     private fun startObservers() {
-        _viewModel.getMessage().observe(this) { message -> showMessage(message) }
+       // _viewModel.getMessage().observe(this) { message -> showMessage(message) }
 
         _viewModelSucursales.sucursales.observe(this) {
             if (it.isNotEmpty()) {
@@ -294,7 +294,7 @@ class RegistrarClienteActivity : AppCompatActivity() {
 
                 //Register ViewModel
                 //Actualizar el idSucursal para crear un prestamo como superAdmin
-                client?.let {
+             /*   client?.let {
                     _viewModel.createClient(
                         it,
                         idSucursal = idSucursalSelected
@@ -311,7 +311,7 @@ class RegistrarClienteActivity : AppCompatActivity() {
                             isEnabled = true
                         }
                     }
-                }
+                }*/
 
             }
         }

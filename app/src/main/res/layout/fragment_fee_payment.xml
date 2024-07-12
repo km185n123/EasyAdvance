@@ -273,9 +273,8 @@
                 android:layout_height="wrap_content"
                 android:focusedByDefault="false"
                 android:hint="Monto del abono"
-                android:inputType="number"
-                android:lines="1"
-                android:maxLength="3" />
+                android:inputType="phone"
+                android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -310,8 +309,7 @@
                 android:focusedByDefault="false"
                 android:hint="Monto a pagar"
                 android:inputType="number"
-                android:lines="1"
-                android:maxLength="3" />
+                android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
 

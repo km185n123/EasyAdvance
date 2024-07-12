@@ -1,69 +1,50 @@
 package com.paparazziapps.pretamistapp.modulos.registro.views
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
+import ClientsViewModel
 import android.content.Context
-import android.graphics.PorterDuff
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.google.gson.Gson
-import com.paparazziapps.pretamistapp.R
-import com.paparazziapps.pretamistapp.databinding.ActivityRegistrarBinding
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
-import com.paparazziapps.pretamistapp.modulos.registro.viewmodels.ViewModelRegister
-import java.text.SimpleDateFormat
-import java.util.*
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.location.Location
-import android.location.LocationManager
 import android.os.Build
-import android.provider.Settings
-import android.util.Log
+import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import com.paparazziapps.pretamistapp.R
+import com.paparazziapps.pretamistapp.databinding.ActivityRegistrarBinding
 import com.paparazziapps.pretamistapp.helper.*
-import com.paparazziapps.pretamistapp.helper.views.beGone
 import com.paparazziapps.pretamistapp.helper.views.beVisible
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.clientes.viewmodels.ClientsViewModel
+import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
 import com.paparazziapps.pretamistapp.modulos.clientes.views.adapter.ClientAdapter
 import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
+import com.paparazziapps.pretamistapp.modulos.registro.viewmodels.ViewModelRegister
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
-import generatePagaresPdfWithSignature
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class RegistrarActivity : AppCompatActivity() {
 
     val _viewModel = ViewModelRegister.getInstance()
-    val _clientViewModel = ClientsViewModel.getInstance()
+    val _clientViewModel = ClientsViewModel.getInstance(ClientProviderFirebase())
     var _viewModelSucursales = ViewModelSucursales.getInstance()
 
     lateinit var binding: ActivityRegistrarBinding
-    var prestamoReceived = Prestamo()
+    var creditReceived = Credit()
     lateinit var fecha: TextInputEditText
     lateinit var layoutFecha: TextInputLayout
     lateinit var registerButton: MaterialButton
@@ -80,7 +61,7 @@ class RegistrarActivity : AppCompatActivity() {
     lateinit var viewProgressSucursal: View
     lateinit var viewCurtainSucursal: View
     lateinit var viewDotsSucursal: View
-    private var prestamo: Prestamo? = Prestamo()
+    private var credit: Credit? = Credit()
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -91,11 +72,11 @@ class RegistrarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrarBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        getLastLocation()
+      //  getLastLocation()
 
         fecha = binding.fecha
         registerButton = binding.registrarButton
-        pagareButton = binding.pagare
+       // pagareButton = binding.pagare
         toolbar = binding.tool.toolbar
 
         layoutFecha = binding.fechaLayout
@@ -110,26 +91,22 @@ class RegistrarActivity : AppCompatActivity() {
 
         fieldsSuperAdmin()
 
-        //Set max lengh Document
-        //  dni.setMaxLength(resources.getInteger(R.integer.cantidad_documento_max))
-        // layoutDNI.counterMaxLength = resources.getInteger(R.integer.cantidad_documento_max)
 
         //get intent
         getExtras()
-        showCalendar()
+       // showCalendar()
         setupSpinners()
         registerPrestamo()
-        sendPagare()
+       // sendPagare()
         setUpToolbarInitialize()
 
         //Observers
         startObservers()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun sendPagare() {
+   /* private fun sendPagare() {
         pagareButton.setOnClickListener {
-            prestamo?.let {
+            credit?.let {
                 val deudor = "Jhon jeferson quevedo"
                 val acreedor = "${it.nombres} ${it.apellidos}"
                 val importe = it.montoTotalAPagar.toString()
@@ -137,15 +114,7 @@ class RegistrarActivity : AppCompatActivity() {
                 val fechaVencimiento = "${it.dias_restantes_por_pagar} despues de la fecha ${fechaEmision}"
                 val phoneNumber = it.celular  // Reemplaza con el número de teléfono deseado
 
-                /* generatePagaresPdf(
-                    this,
-                    "pagare.pdf",
-                    deudor,
-                    acreedor,
-                    importe,
-                    fechaEmision,
-                    fechaVencimiento
-                )*/
+
 
                 val signatureDialog = SignatureDialogFragment()
                 signatureDialog.show(this.supportFragmentManager, "signatureDialog")
@@ -171,9 +140,8 @@ class RegistrarActivity : AppCompatActivity() {
             }
 
         }
-    }
+    }*/
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getCurrentDate(): String {
         val currentDate = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -207,18 +175,8 @@ class RegistrarActivity : AppCompatActivity() {
 
 
     private fun setupSpinners() {
-        _clientViewModel.getClients { isCorrect, msj, result, isRefresh ->
-
-            if (isCorrect) {
-                binding.apply {
-
-                }
-            }
-        }
+        _clientViewModel.getClients()
         _clientViewModel.clients.observe(this) {
-
-            println("Sucursales Finanzas: $it")
-
             if (it.isNotEmpty()) {
                 it.forEach {
                     listClients.add(it)
@@ -227,33 +185,15 @@ class RegistrarActivity : AppCompatActivity() {
 
         }
         val adapterModos = ClientAdapter(this, listClients)
-        binding.dniClient.setAdapter(adapterModos)
+       /* binding.dniClient.setAdapter(adapterModos)
         binding.dniClient.setOnClickListener { binding.dniClient.showDropDown() }
         // Manejar la selección de elementos
         binding.dniClient.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position) as Client
-                // Haz algo con el objeto seleccionado
-                Toast.makeText(this, "Seleccionado: ${selectedItem.nombres}", Toast.LENGTH_SHORT)
-                    .show()
-                prestamo?.nombres = selectedItem.nombres
-                prestamo?.apellidos = selectedItem.apellidos
-                prestamo?.dni = selectedItem.dni
-                prestamo?.celular = selectedItem.celular1
-                prestamo?.fecha = fecha.text.toString().trim()
-                prestamo?.unixtime = fechaSelectedUnixtime
-                prestamo?.unixtimeRegistered = getFechaActualNormalInUnixtime()
-                prestamo?.capital = prestamoReceived.capital
-                prestamo?.interes = prestamoReceived.interes
-                prestamo?.plazo_vto = prestamoReceived.plazo_vto
-                prestamo?.dias_restantes_por_pagar = prestamoReceived.plazo_vto
-                prestamo?.diasPagados = 0
-                prestamo?.montoDiarioAPagar = prestamoReceived.montoDiarioAPagar
-                prestamo?.montoTotalAPagar = prestamoReceived.montoTotalAPagar
-                prestamo?.state = "ABIERTO"
-
+                credit?.dni = selectedItem.dni
                 validateFields()
-            }
+            }*/
 
     }
 
@@ -309,7 +249,7 @@ class RegistrarActivity : AppCompatActivity() {
                 binding.cortina.isVisible = true
 
 
-                prestamo?.fecha = fecha.text.toString().trim()
+                /*credit?.fecha = fecha.text.toString().trim()
                 var idSucursalSelected: Int = INT_DEFAULT
 
                 listaSucursales.forEach {
@@ -317,11 +257,11 @@ class RegistrarActivity : AppCompatActivity() {
                             sucursalTxt.text.toString().trim()
                         ) == true
                     ) idSucursalSelected = it.id ?: INT_DEFAULT
-                }
+                }*/
 
                 //Register ViewModel
                 //Actualizar el idSucursal para crear un prestamo como superAdmin
-                prestamo?.let {
+               /* credit?.let {
 
                     _viewModel.createPrestamo(
                         it,
@@ -339,7 +279,7 @@ class RegistrarActivity : AppCompatActivity() {
                             isEnabled = true
                         }
                     }
-                }
+                }*/
 
                 //Fin click listener
             }
@@ -349,7 +289,7 @@ class RegistrarActivity : AppCompatActivity() {
     }
 
 
-    private fun validateFields() {
+    /*private fun validateFields() {
 
         fecha.doAfterTextChanged {
             showbutton()
@@ -366,11 +306,11 @@ class RegistrarActivity : AppCompatActivity() {
         }
 
 
-    }
+    }*/
 
-    private fun showbutton() {
+  /*  private fun showbutton() {
 
-        if (binding.dniClient.text.toString().equals(prestamo?.nombres) &&
+        if (binding.dniClient.text.toString().equals(credit?.nombres) &&
             fecha.text.toString().trim().isNotEmpty()
         ) {
             //Registrar prestamo
@@ -403,17 +343,17 @@ class RegistrarActivity : AppCompatActivity() {
             }
 
         }
-    }
+    }*/
 
 
-    private fun showCalendar() {
+/*    private fun showCalendar() {
         binding.fechaLayout.setEndIconOnClickListener {
             getCalendar()
         }
-    }
+    }*/
 
 
-    @SuppressLint("SimpleDateFormat")
+/*    @SuppressLint("SimpleDateFormat")
     private fun getCalendar() {
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
@@ -434,9 +374,9 @@ class RegistrarActivity : AppCompatActivity() {
 
         }
 
-    }
+    }*/
 
-    private fun getLastLocation() {
+ /*   private fun getLastLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
@@ -448,7 +388,7 @@ class RegistrarActivity : AppCompatActivity() {
                             val latitude = location.latitude
                             val longitude = location.longitude
                             Log.d("MainActivity", "Lat: $latitude, Lon: $longitude")
-                            prestamo?.let {
+                            credit?.let {
                                 it.coordenada = "$latitude,$longitude"
                             }
                             Toast.makeText(
@@ -474,21 +414,21 @@ class RegistrarActivity : AppCompatActivity() {
             )
         }
 
-    }
+    }*/
 
-    private fun isLocationEnabled(): Boolean {
+ /*   private fun isLocationEnabled(): Boolean {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
-    }
+    }*/
 
-    private fun promptEnableLocation() {
+  /*  private fun promptEnableLocation() {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
-    }
+    }*/
 
-    override fun onRequestPermissionsResult(
+ /*   override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
@@ -506,27 +446,27 @@ class RegistrarActivity : AppCompatActivity() {
                 Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_LONG).show()
             }
         }
-    }
+    }*/
 
 
     private fun getExtras() {
 
-        if (intent.extras != null) {
+        /*if (intent.extras != null) {
             var extras = intent.getStringExtra("prestamoJson")
             var gson = Gson()
 
             if (!extras.isNullOrEmpty()) {
-                prestamoReceived = gson.fromJson(extras, Prestamo::class.java)
-                binding.interes.setText("${prestamoReceived.interes!!.toInt()}%")
-                binding.capital.setText("${getString(R.string.tipo_moneda)} ${prestamoReceived.capital!!.toInt()}")
-                binding.plazosEnDias.setText("${prestamoReceived.plazo_vto.toString()} dias")
+                creditReceived = gson.fromJson(extras, Credit::class.java)
+                binding.interes.setText("${creditReceived.creditInterest?.toInt()}%")
+                binding.capital.setText("${getString(R.string.tipo_moneda)} ${creditReceived.capital?.toInt()}")
+                binding.plazosEnDias.setText("${creditReceived.plazo_vto.toString()} dias")
             }
-        }
+        }*/
 
     }
 
     override fun onDestroy() {
-        prestamo = null
+        credit = null
         ViewModelRegister.destroyInstance()
         super.onDestroy()
     }

@@ -1,23 +1,20 @@
-package com.paparazziapps.pretamistapp.modulos.mesage
+package com.paparazziapps.pretamistapp.modulos.network
 
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.http.Header
-import retrofit2.http.Multipart
+import com.paparazziapps.pretamistapp.modulos.mesage.SendMessageRequest
+import com.paparazziapps.pretamistapp.modulos.mesage.SendMessageResponse
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
 import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Path
-
 
 interface ChatwootService {
-    @Multipart
-    @POST("/conversations/{conversationId}/messages")
-    fun createMessage(
-        @Header("api_access_token") token: String?,
-        @Path("conversationId") conversationId: String?,
-        @Part("content") content: RequestBody?,
-        @Part("message_type") messageType: RequestBody?,
-        @Part("private") isPrivate: RequestBody?,
-        @Part attachment: Part?
-    ): Call<ResponseBody?>?
+    @Headers(
+        "Content-Type: application/json",
+        "custom-header: headerValue"
+    )
+    @POST("chatwoot")
+    suspend fun sendMessage(@Body request: SendMessageRequest): Response<SendMessageResponse>
+
 }

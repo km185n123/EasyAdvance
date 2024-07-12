@@ -5,19 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.paparazziapps.pretamistapp.R
-import com.paparazziapps.pretamistapp.databinding.ContentPrestamoBinding
 import com.paparazziapps.pretamistapp.databinding.ItemDetallePrestamoBinding
 import com.paparazziapps.pretamistapp.helper.*
-import com.paparazziapps.pretamistapp.modulos.dashboard.adapters.PrestamoAdapter
-import com.paparazziapps.pretamistapp.modulos.registro.pojo.Prestamo
+import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 
 class PrestamoDetalleAdapter : RecyclerView.Adapter<PrestamoDetalleAdapter.ViewHolder>() {
 
 
 
-    var prestamosDetalle: MutableList<Prestamo> = mutableListOf()
+    var prestamosDetalle: MutableList<Credit> = mutableListOf()
 
-    fun setData(listPrestamos: MutableList<Prestamo>) {
+    fun setData(listPrestamos: MutableList<Credit>) {
         prestamosDetalle = listPrestamos
         notifyDataSetChanged()
     }
@@ -43,7 +41,7 @@ class PrestamoDetalleAdapter : RecyclerView.Adapter<PrestamoDetalleAdapter.ViewH
 
         val binding = ItemDetallePrestamoBinding.bind(itemView)
 
-        fun bind(item: Prestamo){
+        fun bind(item: Credit){
 
             var position = binding.circleCount
             var deuda = binding.btnDeuda
@@ -51,14 +49,14 @@ class PrestamoDetalleAdapter : RecyclerView.Adapter<PrestamoDetalleAdapter.ViewH
             var plazo_vto = binding.tvDiasRestantes
 
             //
-            var plazo = getDiasRestantesFromStart(item.fecha?:"",item.plazo_vto?:0)
+            var plazo = getDiasRestantesFromStart(item.startTime?:"",item.creditTerm?.toInt()?:0)
 
             //Calcular deuda de dias no pagados
-            var deudaTotal = getDiasRestantesFromDateToNowMinusDiasPagados(item.fecha?:"",item.diasPagados?:0).toInt().times(item.montoDiarioAPagar?:0.0)
+            var deudaTotal = getDiasRestantesFromDateToNowMinusDiasPagados(item.startTime?:"",item.daysPaid?.toInt()?:0).toInt().times(item.amountTotalPay?.toDouble()?:0.0)
 
             itemView.apply {
                 position.text = adapterPosition.toString()
-                nombres.text = replaceFirstCharInSequenceToUppercase(item.nombres.toString())
+                nombres.text = replaceFirstCharInSequenceToUppercase("item.nombres.toString()")
                 plazo_vto.text = "Se vence en ${if(plazo==1) "$plazo día" else "$plazo días"}"
 
                 if(deudaTotal > 0)
