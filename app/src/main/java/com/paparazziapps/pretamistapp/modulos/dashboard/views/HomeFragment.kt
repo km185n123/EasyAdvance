@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.paparazziapps.pretamistapp.R
 import com.paparazziapps.pretamistapp.databinding.DialogSalirSinGuardarBinding
@@ -119,7 +118,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
 
     private fun actionListening() {
-        binding.actionLocation.setOnClickListener {
+      /*  binding.actionLocation.setOnClickListener {
 
         }
         binding.actionAdd.setOnClickListener {
@@ -157,7 +156,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                 data = Uri.parse(phoneNumber)
             }
             startActivity(callIntent)
-        }
+        }*/
 
     }
 
@@ -226,7 +225,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
                         prestamoAdapter.setData(newPrestamos)
 
                     } catch (t: Throwable) {
-                        FirebaseCrashlytics.getInstance().recordException(t)
+                       // FirebaseCrashlytics.getInstance().recordException(t)
                     }
                 }
             } else {

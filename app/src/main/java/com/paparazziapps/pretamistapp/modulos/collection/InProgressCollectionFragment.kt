@@ -20,6 +20,7 @@ import com.paparazziapps.pretamistapp.modulos.geofence.GoogleGeofenceProvider
 import com.paparazziapps.pretamistapp.modulos.location.LocationManager
 import com.paparazziapps.pretamistapp.modulos.location.geofence.GeofenceCallback
 import com.paparazziapps.pretamistapp.modulos.registro.providers.PrestamoProvider
+import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 
 class InProgressCollectionFragment : Fragment() {
 
@@ -45,7 +46,7 @@ class InProgressCollectionFragment : Fragment() {
 
         viewModel = ViewModelProvider(
             this,
-            LoanViewModelFactory(PrestamoProvider())
+            LoanViewModelFactory(PrestamoProvider(MyPreferences()))
         ).get(LoanViewModel::class.java)
         viewModel?.loadCurrentLoan()
 

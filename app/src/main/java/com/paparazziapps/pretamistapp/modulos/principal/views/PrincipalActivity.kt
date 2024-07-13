@@ -29,7 +29,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.common.base.Strings.isNullOrEmpty
 import com.paparazziapps.pretamistapp.R
 import com.paparazziapps.pretamistapp.databinding.ActivityPrincipalBinding
 import com.paparazziapps.pretamistapp.databinding.BottomsheetDetallePrestamoBinding
@@ -426,7 +425,7 @@ class PrincipalActivity : AppCompatActivity(){
                 isEnabled = false
             }
 
-            if(isNullOrEmpty(montoTotalAPagar.toString()))
+            if(montoTotalAPagar.toString().isNotEmpty())
             {
                 if(montoTotalAPagar.toString().contains("null"))
                 {

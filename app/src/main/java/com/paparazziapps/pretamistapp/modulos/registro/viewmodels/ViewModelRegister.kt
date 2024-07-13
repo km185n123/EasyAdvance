@@ -5,13 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import com.paparazziapps.pretamistapp.helper.getDoubleWithOneDecimalsReturnDouble
 import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziapps.pretamistapp.modulos.registro.providers.PrestamoProvider
+import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 import java.lang.Exception
 
 open class ViewModelRegister private constructor(){
 
     var _message = MutableLiveData<String>()
     var _montoDiario = MutableLiveData<Double>()
-    var mPrestamoProvider = PrestamoProvider()
+    var mPrestamoProvider = PrestamoProvider(MyPreferences())
 
     fun getMessage() :LiveData<String>{
         return  _message

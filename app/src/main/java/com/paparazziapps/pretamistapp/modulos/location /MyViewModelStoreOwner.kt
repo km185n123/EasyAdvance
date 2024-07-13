@@ -4,9 +4,6 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 
 class MyViewModelStoreOwner : ViewModelStoreOwner {
-    private val viewModelStore = ViewModelStore()
-
-    override fun getViewModelStore(): ViewModelStore {
-        return viewModelStore
-    }
+    override val viewModelStore = ViewModelStore()
+    
 }

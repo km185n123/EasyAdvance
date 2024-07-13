@@ -33,7 +33,7 @@
                 fab:layout_constraintTop_toTopOf="parent" />
 
             <!-- Floating Action Menu -->
-            <toan.android.floatingactionmenu.FloatingActionsMenu
+            <com.github.clans.fab.FloatingActionMenu
                 android:id="@+id/multiple_actions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,56 +41,53 @@
                 android:layout_marginBottom="100dp"
                 app:layout_constraintBottom_toBottomOf="@+id/mapView"
                 app:layout_constraintEnd_toEndOf="parent"
-                fab:fab_addButtonColorNormal="@color/white"
-                fab:fab_addButtonColorPressed="@color/white"
-                fab:fab_addButtonPlusIconColor="@color/color_gray_web"
-                fab:fab_animationScroll="translationY"
-                fab:fab_labelStyle="@style/menu_labels_style">
+                fab:fab_colorNormal="@color/white"
+                fab:fab_colorPressed="@color/white"
+                app:fab_showAnimation="@anim/fab_scale_up"
+                app:fab_hideAnimation="@anim/fab_scale_down">
 
-                <toan.android.floatingactionmenu.FloatingActionButton
+                <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/action_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:rippleColor="@color/colorSecondary"
                     fab:fab_colorNormal="@color/white"
                     fab:fab_colorPressed="@color/black"
-                    fab:fab_icon="@drawable/gps" />
+                    android:src="@drawable/gps" />
 
-                <toan.android.floatingactionmenu.FloatingActionButton
+                <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/action_add"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     fab:fab_colorNormal="@color/white"
                     fab:fab_colorPressed="@color/black"
-                    fab:fab_icon="@drawable/add" />
+                    android:src="@drawable/add" />
 
-                <toan.android.floatingactionmenu.FloatingActionButton
+                <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/action_phone_client"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     fab:fab_colorNormal="@color/white"
                     fab:fab_colorPressed="@color/black"
-                    fab:fab_icon="@drawable/telefono" />
+                    android:src="@drawable/telefono" />
 
-                <toan.android.floatingactionmenu.FloatingActionButton
+                <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/action_whatsapp_client"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     fab:fab_colorNormal="@color/white"
                     fab:fab_colorPressed="@color/black"
-                    fab:fab_icon="@drawable/whatsapp" />
+                    android:src="@drawable/whatsapp" />
 
-                <toan.android.floatingactionmenu.FloatingActionButton
+                <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/action_go_to_client"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     fab:fab_colorNormal="@color/white"
                     fab:fab_colorPressed="@color/black"
-                    fab:fab_icon="@drawable/ubicacion"
-                    fab:fab_labelStyle="@style/menu_labels_style" />
+                    android:src="@drawable/ubicacion" />
 
-            </toan.android.floatingactionmenu.FloatingActionsMenu>
-
+            </com.github.clans.fab.FloatingActionMenu>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -11,7 +11,6 @@ import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.work.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -67,9 +66,7 @@ class LocationManager private constructor(val context: Context) {
         context.stopService(serviceIntent)
     }
 
-    fun stopWorkManager(context: Context) {
-        WorkManager.getInstance(context).cancelUniqueWork("LocationWork")
-    }
+
 
     fun startLocationUpdates(locationListener: (Location) -> Unit) {
         Log.d("LocationManager", "Iniciando actualizaciones de ubicación.,")

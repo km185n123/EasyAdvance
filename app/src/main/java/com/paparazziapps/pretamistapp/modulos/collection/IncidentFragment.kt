@@ -37,8 +37,8 @@ class IncidentFragment : Fragment() {
     }
 
     private fun setupSpinner(reasons: Array<String>) {
-        val adapter = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, reasons)
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, reasons)
+        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)
         _binding?.spinnerReasons?.adapter = adapter
         _binding?.spinnerReasons?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(

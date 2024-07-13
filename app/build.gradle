@@ -1,4 +1,124 @@
 plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
+    id 'kotlinx-serialization'
+}
+
+android {
+    //namespace = "co.com.appsource.easy_avance"
+    namespace = "com.paparazziapps.pretamistapp"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.paparazziapps.pretamistapp"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true // Propiedad correcta
+            proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    viewBinding{
+        enable = true
+    }
+}
+
+dependencies {
+
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.lifecycle:lifecycle-process:2.8.3")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.5.1"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.ktor:ktor-client-android:2.3.12")
+
+    // Lifecycle dependencies
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:2.8.3")
+    implementation ("androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3")
+
+    // Lottie dependency
+    implementation ("com.airbnb.android:lottie:6.4.0")
+
+    //retrofit
+    implementation ("androidx.viewpager2:viewpager2:1.1.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation ("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
+
+    //navigation
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-dynamic-features-fragment:2.7.7")
+    androidTestImplementation ("androidx.navigation:navigation-testing:2.7.7")
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
+
+    //location
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
+    implementation ("com.google.android.gms:play-services-maps:19.0.0")
+
+    // iTextPDF dependencies
+    implementation ("com.itextpdf:kernel:7.2.2")
+    implementation ("com.itextpdf:layout:7.2.2")
+    implementation ("com.itextpdf:io:7.2.2")
+
+    implementation ("androidx.multidex:multidex:2.0.1")
+
+    // Firebase dependencies
+
+
+    /*implementation 'com.google.firebase:firebase-firestore-ktx:25.0.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:19.0.2'*/
+
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-database-ktx")
+
+
+
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    implementation ("com.github.clans:fab:1.6.4")
+
+    implementation ("io.insert-koin:koin-android:3.6.0-wasm-alpha2")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+
+    /*
+    * plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.google.gms.google-services'
@@ -58,15 +178,32 @@ dependencies {
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-firestore-ktx:23.0.3'
-    implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
-    implementation 'com.google.firebase:firebase-firestore:24.0.2'
+
+    // Firebase dependencies
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-maps:18.0.0'
+    implementation 'com.google.android.gms:play-services-ads:21.5.0'
     implementation 'androidx.lifecycle:lifecycle-process:2.5.1'
-    testImplementation 'junit:junit:4.+'
+
+    // Lifecycle dependencies
+    def lifecycle_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3"
+
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation 'com.airbnb.android:lottie:6.4.0'
-   // implementation 'com.github.joaomgcd:whats2:1.0.2'
 
     // Lottie dependency
     implementation "com.airbnb.android:lottie:3.4.0"
@@ -76,28 +213,16 @@ dependencies {
     implementation 'com.itextpdf:layout:7.2.2'
     implementation 'com.itextpdf:io:7.2.2'
 
-
     implementation 'com.google.code.gson:gson:2.9.0'
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
     implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
 
-    implementation platform('com.google.firebase:firebase-bom:31.1.1')
-    implementation 'com.google.firebase:firebase-database-ktx'
-
     def nav_version = "2.4.1"
-    // Kotlin
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
-
-    // Feature module Support
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
-
-    // Testing Navigation
-    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
-
-    // Jetpack Compose Integration
-    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
 
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -106,33 +231,17 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.google.android.gms:play-services-maps:18.0.0'
-
-    // Declare the dependencies for the Crashlytics and Analytics libraries
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-
-    //Cloud Firestore
-    implementation 'com.google.firebase:firebase-firestore:20.0.0'
-    implementation 'com.google.firebase:firebase-auth:18.0.0'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
-
-    implementation 'com.google.android.gms:play-services-ads:21.5.0'
-
-    def lifecycle_version = "2.3.1"
-    //implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    implementation 'info.guardianproject.netcipher:netcipher:2.2.0-alpha'
+    implementation platform('io.github.jan-tennert.supabase:bom:2.5.1')
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation "io.ktor:ktor-client-android:2.3.12"
 
     implementation 'androidx.multidex:multidex:2.0.1'
-
     implementation 'com.github.toanvc:floatingactionmenu:0.8.9'
-
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation "androidx.work:work-runtime:2.7.1"
     implementation "androidx.concurrent:concurrent-futures:1.1.0"
+}
 
-
+    *
+    * */
 }

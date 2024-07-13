@@ -9,15 +9,21 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.paparazziapps.pretamistapp.R
 import com.paparazziapps.pretamistapp.databinding.ActivityLoginBinding
+import com.paparazziapps.pretamistapp.factory.LoginViewModelFactory
 import com.paparazziapps.pretamistapp.helper.*
-import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelLogin
+import com.paparazziapps.pretamistapp.modulos.login.providers.LoginProvider
 import com.paparazziapps.pretamistapp.modulos.principal.views.PrincipalActivity
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
+import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelLogin
 
 class LoginActivity : AppCompatActivity() {
 
@@ -27,13 +33,26 @@ class LoginActivity : AppCompatActivity() {
     var btnLoginEmail: MaterialButton? = null
     var isValidEmail = false
     var isValidPass:Boolean = false
-    var _viewModelLogin = ViewModelLogin.getInstance()
+    private lateinit var _viewModelLogin: ViewModelLogin
+
+
+
     var TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        FirebaseApp.initializeApp(this)
+
+        val settings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .build()
+        FirebaseFirestore.getInstance().firestoreSettings = settings
+        _viewModelLogin = ViewModelProvider(this, LoginViewModelFactory(LoginProvider()))
+            .get(ViewModelLogin::class.java)
+
 
         setColorToStatusBar(this)
         isAlreadyLogin()
@@ -58,19 +77,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showObservables() {
-        _viewModelLogin.showMessage().observe(this) { message ->
+
+        _viewModelLogin.message.observe(this) { message ->
             if (message != null) {
                 _showMessageMainThread(message)
             }
         }
-        _viewModelLogin.getIsLoginAnonymous().observe(this) { isLoginAnonymous ->
-            if (isLoginAnonymous) {
-                startActivity(Intent(this, LoginActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+
+        _viewModelLogin.isLoading.observe(this) { isLoading ->
+            Log.e("ISLOADING", "ISLOADING:$isLoading")
+            if (isLoading) {
+                binding.layoutLoading.visibility = View.VISIBLE
+            } else {
+                binding.layoutLoading.visibility = View.GONE
             }
         }
 
-        //Login with email
-        _viewModelLogin.getIsLoginEmail().observe(this) { isLoginEmail ->
+        _viewModelLogin.isLoginEmail.observe(this) { isLoginEmail ->
             println("isLoginEmail: $isLoginEmail")
             if (isLoginEmail) {
                 Log.e(TAG, "EMAIL ENVIADO: " + binding.email.text.toString().lowercase())
@@ -81,21 +104,14 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
         }
-        _viewModelLogin.getIsLoading().observe(this) { isLoading ->
-            Log.e("ISLOADING", "ISLOADING:$isLoading")
-            if (isLoading) {
-                binding.layoutLoading.visibility = View.VISIBLE
-            } else {
-                binding.layoutLoading.visibility = View.GONE
-            }
-        }
+
     }
 
     private fun loginFirebase() {
         btnLoginEmail!!.setOnClickListener {
             hideKeyboardActivity(this@LoginActivity)
             if (isConnected(applicationContext)) {
-                _viewModelLogin.loginWithEmail(
+                _viewModelLogin?.loginWithEmail(
                     binding.email.text.toString().trim(),
                     binding.pass.text.toString().trim()
                 )
@@ -186,7 +202,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-    ViewModelLogin.destroyInstance()
         super.onDestroy()
     }
 }

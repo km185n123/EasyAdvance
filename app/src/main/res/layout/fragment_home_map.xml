@@ -123,7 +123,7 @@
             android:elevation="6dp"
             android:visibility="gone" />
 
-        <toan.android.floatingactionmenu.FloatingActionsMenu
+        <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/multiple_actions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,32 +134,30 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
-            fab:fab_addButtonColorNormal="@color/white"
-            fab:fab_addButtonColorPressed="@color/white"
-            fab:fab_addButtonPlusIconColor="@color/color_gray_web"
-            fab:fab_animationScroll="translationY"
-            fab:fab_labelStyle="@style/menu_labels_style">
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/white"
+            app:fab_showAnimation="@anim/fab_scale_up"
+            app:fab_hideAnimation="@anim/fab_scale_down">
 
-            <toan.android.floatingactionmenu.FloatingActionButton
+            <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/action_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/black"
-                fab:fab_icon="@drawable/ic_keyboard_arrow_down"
-                fab:fab_title="Ubicacion" />
+                android:src="@drawable/ic_keyboard_arrow_down"
+                fab:fab_label="Ubicacion" />
 
-            <toan.android.floatingactionmenu.FloatingActionButton
+            <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/action_b"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/black"
-                fab:fab_icon="@drawable/ic_person"
-                fab:fab_title="Agregar cliente" />
+                android:src="@drawable/ic_person"
+                fab:fab_label="Agregar cliente" />
 
-        </toan.android.floatingactionmenu.FloatingActionsMenu>
-
+        </com.github.clans.fab.FloatingActionMenu>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

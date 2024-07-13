@@ -8,11 +8,12 @@ import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziapps.pretamistapp.modulos.registro.providers.DetallePrestamoProvider
 import com.paparazziapps.pretamistapp.modulos.registro.providers.PrestamoProvider
 import com.paparazziapps.pretamistapp.modulos.tesoreria.pojo.DetallePrestamoSender
+import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 
 class ViewModelDashboard private constructor(){
 
     var _message = MutableLiveData<String>()
-    var mPrestamoProvider = PrestamoProvider()
+    var mPrestamoProvider = PrestamoProvider(MyPreferences())
     var mDetallePrestamoProvider = DetallePrestamoProvider()
     var _prestamos = MutableLiveData<MutableList<Credit>>()
 
