@@ -1,4 +1,4 @@
-package com.paparazziapps.pretamistapp.modulos.dashboard.adapters
+package com.paparazziapps.pretamistapp.modulos.dashboard.views.adapters
 
 import android.content.Intent
 import android.net.Uri

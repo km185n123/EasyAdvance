@@ -33,7 +33,7 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.paparazziapps.pretamistapp.R
-import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursales
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

@@ -1,4 +1,4 @@
-package com.paparazziapps.pretamistapp.modulos.login.pojo
+package com.paparazziapps.pretamistapp.modulos.login.data.model.pojo
 
 data class User (
     var nombres: String? = null,

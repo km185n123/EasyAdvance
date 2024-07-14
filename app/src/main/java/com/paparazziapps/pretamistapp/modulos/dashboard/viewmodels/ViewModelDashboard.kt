@@ -17,7 +17,6 @@ class ViewModelDashboard private constructor(){
     var mDetallePrestamoProvider = DetallePrestamoProvider()
     var _prestamos = MutableLiveData<MutableList<Credit>>()
 
-
     fun receivePrestamos (): LiveData<MutableList<Credit>> = _prestamos
 
     fun getPrestamos() {
@@ -85,7 +84,6 @@ class ViewModelDashboard private constructor(){
                     onComplete(isCorrect, "No se pudo actualizar el pago, inténtelo otra vez", null, false)
                 }
             }
-
 
         }catch (t:Throwable)
         {

@@ -35,7 +35,7 @@ import com.paparazziapps.pretamistapp.helper.setMaxLength
 import com.paparazziapps.pretamistapp.helper.views.beVisible
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
 import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
-import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 

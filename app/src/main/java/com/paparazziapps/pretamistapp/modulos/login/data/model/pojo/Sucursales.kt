@@ -1,4 +1,4 @@
-package com.paparazziapps.pretamistapp.modulos.login.pojo
+package com.paparazziapps.pretamistapp.modulos.login.data.model.pojo
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

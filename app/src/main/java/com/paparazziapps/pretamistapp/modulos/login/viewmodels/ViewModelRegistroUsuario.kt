@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.FirebaseUser
-import com.paparazziapps.pretamistapp.modulos.login.pojo.User
-import com.paparazziapps.pretamistapp.modulos.login.providers.RegisterProvider
-import com.paparazziapps.pretamistapp.modulos.login.providers.UserProvider
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.User
+import com.paparazziapps.pretamistapp.modulos.login.data.remote.providers.RegisterProvider
+import com.paparazziapps.pretamistapp.modulos.login.data.remote.providers.UserProvider
 
 class ViewModelRegistroUsuario private constructor() {
 

@@ -1,4 +1,4 @@
-package com.paparazziapps.pretamistapp.modulos.login.providers
+package com.paparazziapps.pretamistapp.modulos.login.data.remote.providers
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
@@ -6,7 +6,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.ktx.Firebase
-import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursales
 
 class SucursalesProvider {
 

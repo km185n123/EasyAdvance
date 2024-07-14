@@ -52,7 +52,9 @@ import com.paparazziapps.pretamistapp.modulos.login.views.LoginActivity
 import com.paparazziapps.pretamistapp.modulos.principal.viewmodels.ViewModelPrincipal
 import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PrincipalActivity : AppCompatActivity(){
     private lateinit var binding:ActivityPrincipalBinding
     private lateinit var bottomNavigationView: BottomNavigationView

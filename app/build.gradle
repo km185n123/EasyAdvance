@@ -1,8 +1,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id 'kotlinx-serialization'
+
+
 }
 
 android {
@@ -37,8 +41,15 @@ android {
         jvmTarget = "1.8"
     }
 
-    viewBinding{
+    viewBinding {
         enable = true
+    }
+    hilt {
+        enableAggregatingTask = true
+    }
+
+    dexOptions {
+        preDexLibraries false
     }
 }
 
@@ -53,33 +64,44 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
-    implementation(platform("io.github.jan-tennert.supabase:bom:2.5.1"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.ktor:ktor-client-android:2.3.12")
+    //implementation("io.github.jan-tennert.supabase:bom:2.5.1")
+    //implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    //implementation("io.ktor:ktor-client-android:2.3.12")
+    // implementation ("io.github.jan-tennert.supabase:postgrest-kt:2.5.1")
+
+    def supabase_version = "2.5.1"
+    def ktor_version = "2.3.12"
+    implementation "io.github.jan-tennert.supabase:postgrest-kt:$supabase_version"
+    implementation "io.github.jan-tennert.supabase:storage-kt:$supabase_version"
+    implementation "io.github.jan-tennert.supabase:gotrue-kt:$supabase_version"
+    implementation "io.ktor:ktor-client-android:$ktor_version"
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-utils:$ktor_version"
+
 
     // Lifecycle dependencies
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
-    implementation ("androidx.lifecycle:lifecycle-common-java8:2.8.3")
-    implementation ("androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3")
 
     // Lottie dependency
-    implementation ("com.airbnb.android:lottie:6.4.0")
+    implementation("com.airbnb.android:lottie:6.4.0")
 
     //retrofit
-    implementation ("androidx.viewpager2:viewpager2:1.1.0")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation ("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
 
     //navigation
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-dynamic-features-fragment:2.7.7")
-    androidTestImplementation ("androidx.navigation:navigation-testing:2.7.7")
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.7.7")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     //location
     implementation ("com.google.android.gms:play-services-location:21.3.0")
@@ -90,158 +112,29 @@ dependencies {
     implementation ("com.itextpdf:layout:7.2.2")
     implementation ("com.itextpdf:io:7.2.2")
 
-    implementation ("androidx.multidex:multidex:2.0.1")
+    implementation("androidx.multidex:multidex:2.0.1")
 
     // Firebase dependencies
-
-
-    /*implementation 'com.google.firebase:firebase-firestore-ktx:25.0.0'
-    implementation 'com.google.firebase:firebase-auth-ktx:23.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:19.0.2'*/
-
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation ("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
 
 
-
-
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-
-    implementation ("com.github.clans:fab:1.6.4")
-
-    implementation ("io.insert-koin:koin-android:3.6.0-wasm-alpha2")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("com.github.clans:fab:1.6.4")
+    implementation("io.insert-koin:koin-android:3.6.0-wasm-alpha2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
 
-    /*
-    * plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
-    id 'kotlinx-serialization'
+    // dagger
+    implementation 'com.google.dagger:hilt-android:2.51.1'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.51.1'
+    kapt 'com.google.dagger:hilt-compiler:2.51.1'
+
+
 }
-
-android {
-    compileSdk 33
-
-    defaultConfig {
-        applicationId "com.paparazziapps.pretamistapp"
-        minSdk 26
-        targetSdk 33
-        multiDexEnabled true
-        versionCode 5
-        versionName "2.2.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            firebaseCrashlytics {
-                nativeSymbolUploadEnabled true
-                strippedNativeLibsDir 'build/intermediates/stripped_native_libs/release/out/lib'
-                unstrippedNativeLibsDir 'build/intermediates/merged_native_libs/release/out/lib'
-            }
-        }
-
-        debug {
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    viewBinding {
-        enabled = true
-    }
-}
-
-dependencies {
-
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-    // Firebase dependencies
-    implementation platform('com.google.firebase:firebase-bom:31.1.1')
-    implementation 'com.google.firebase:firebase-firestore-ktx'
-    implementation 'com.google.firebase:firebase-storage-ktx'
-    implementation 'com.google.firebase:firebase-database-ktx'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
-
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.google.android.gms:play-services-maps:18.0.0'
-    implementation 'com.google.android.gms:play-services-ads:21.5.0'
-    implementation 'androidx.lifecycle:lifecycle-process:2.5.1'
-
-    // Lifecycle dependencies
-    def lifecycle_version = "2.5.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3"
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
-    // Lottie dependency
-    implementation "com.airbnb.android:lottie:3.4.0"
-
-    // iTextPDF dependencies
-    implementation 'com.itextpdf:kernel:7.2.2'
-    implementation 'com.itextpdf:layout:7.2.2'
-    implementation 'com.itextpdf:io:7.2.2'
-
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
-    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
-
-    def nav_version = "2.4.1"
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
-    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
-    implementation "androidx.navigation:navigation-compose:$nav_version"
-
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
-
-    implementation 'info.guardianproject.netcipher:netcipher:2.2.0-alpha'
-    implementation platform('io.github.jan-tennert.supabase:bom:2.5.1')
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation "io.ktor:ktor-client-android:2.3.12"
-
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.github.toanvc:floatingactionmenu:0.8.9'
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation "androidx.concurrent:concurrent-futures:1.1.0"
-}
-
-    *
-    * */
+kapt {
+    correctErrorTypes = true
 }

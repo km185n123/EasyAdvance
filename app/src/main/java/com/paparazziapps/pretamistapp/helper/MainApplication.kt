@@ -8,16 +8,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.multidex.MultiDexApplication
 import com.google.android.gms.ads.*
 import com.google.firebase.FirebaseApp
+import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 
 lateinit var ctx      : Context
 private val LOG_TAG = "MyApplication"
 private val AD_UNIT_ID = "ca-app-pub-4239770697814982/8634079005"
 
-class MainApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks,
+@HiltAndroidApp
+class MainApplication : Application(), Application.ActivityLifecycleCallbacks,
     LifecycleObserver {
 
     private var currentActivity: Activity? = null

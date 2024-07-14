@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
-import com.paparazziapps.pretamistapp.modulos.login.pojo.User
-import com.paparazziapps.pretamistapp.modulos.login.providers.LoginProvider
-import com.paparazziapps.pretamistapp.modulos.login.providers.UserProvider
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.User
+import com.paparazziapps.pretamistapp.modulos.login.data.remote.providers.LoginProvider
+import com.paparazziapps.pretamistapp.modulos.login.data.remote.providers.UserProvider
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelRegistroUsuario
 
 class ViewModelPrincipal : ViewModel() {

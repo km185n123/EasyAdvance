@@ -3,9 +3,10 @@ package com.paparazziapps.pretamistapp.modulos.login.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursal
-import com.paparazziapps.pretamistapp.modulos.login.pojo.Sucursales
-import com.paparazziapps.pretamistapp.modulos.login.providers.SucursalesProvider
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursal
+import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursales
+import com.paparazziapps.pretamistapp.modulos.login.data.remote.providers.SucursalesProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 class ViewModelSucursales private constructor(){
