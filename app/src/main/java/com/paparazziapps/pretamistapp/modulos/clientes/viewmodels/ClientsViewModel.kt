@@ -2,7 +2,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.ktx.toObject
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
+import com.paparazziapps.pretamistapp.modulos.clientes.remote.providers.firebase.ClientProviderFirebase
 
 class ClientsViewModel private constructor(private val clientProvider: ClientProviderFirebase) {
 

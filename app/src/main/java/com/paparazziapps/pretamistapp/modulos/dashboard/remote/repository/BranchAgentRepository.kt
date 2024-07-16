@@ -1,4 +1,4 @@
-package com.paparazziapps.pretamistapp.modulos.dashboard.repository
+package com.paparazziapps.pretamistapp.modulos.dashboard.remote.repository
 
 import com.paparazziapps.pretamistapp.modulos.dashboard.data.dto.BranchAgentDTO
 

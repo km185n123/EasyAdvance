@@ -118,7 +118,7 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
 
 
     private fun actionListening() {
-      /*  binding.actionLocation.setOnClickListener {
+        binding.actionLocation.setOnClickListener {
 
         }
         binding.actionAdd.setOnClickListener {
@@ -151,12 +151,12 @@ class HomeFragment : Fragment(), setOnClickedPrestamo, OnMapReadyCallback {
             }
         }
         binding.actionPhoneClient.setOnClickListener {
-            val phoneNumber = "tel:1234567890"  // Reemplaza con el número de teléfono deseado
+            val phoneNumber = "tel:1234567890"
             val callIntent = Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse(phoneNumber)
             }
             startActivity(callIntent)
-        }*/
+        }
 
     }
 

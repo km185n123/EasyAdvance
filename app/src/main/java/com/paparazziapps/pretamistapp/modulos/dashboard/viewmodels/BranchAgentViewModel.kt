@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paparazziapps.pretamistapp.modulos.dashboard.data.dto.BranchAgentDTO
-import com.paparazziapps.pretamistapp.modulos.dashboard.repository.BranchAgentRepository
+import com.paparazziapps.pretamistapp.modulos.dashboard.remote.repository.BranchAgentRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

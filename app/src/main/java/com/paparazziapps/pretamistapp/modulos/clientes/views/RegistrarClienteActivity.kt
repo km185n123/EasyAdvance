@@ -5,343 +5,210 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.PorterDuff
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.paparazziapps.pretamistapp.R
 import com.paparazziapps.pretamistapp.databinding.ActivityRegistrarClienteBinding
-import com.paparazziapps.pretamistapp.helper.INT_DEFAULT
 import com.paparazziapps.pretamistapp.helper.hideKeyboardActivity
 import com.paparazziapps.pretamistapp.helper.setMaxLength
 import com.paparazziapps.pretamistapp.helper.views.beVisible
-import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
+import com.paparazziapps.pretamistapp.modulos.clientes.data.pojo.Client
+import com.paparazziapps.pretamistapp.modulos.clientes.viewmodels.ClientViewModel
 import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
+import com.paparazziapps.pretamistapp.modulos.login.views.LoginActivity
+import com.paparazziapps.pretamistapp.modulos.principal.views.PrincipalActivity
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
+import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
+@AndroidEntryPoint
 class RegistrarClienteActivity : AppCompatActivity() {
 
-    val _viewModel = ClientsViewModel.getInstance(clientProvider = ClientProviderFirebase())
-    var _viewModelSucursales = ViewModelSucursales.getInstance()
-
-    lateinit var binding: ActivityRegistrarClienteBinding
-
-    lateinit var nombres: TextInputEditText
-    lateinit var layoutNombres: TextInputLayout
-    lateinit var apellidos: TextInputEditText
-    lateinit var layoutApellidos: TextInputLayout
-    lateinit var dni: TextInputEditText
-    lateinit var layoutDNI: TextInputLayout
-    lateinit var celular: TextInputEditText
-    lateinit var layoutCelular: TextInputLayout
-    lateinit var layoutEdad: TextInputLayout
-    lateinit var celularReferencia: TextInputLayout
-    lateinit var direccion: TextInputLayout
-    lateinit var direccionReferencia: TextInputLayout
-    lateinit var ubicacion: TextInputLayout
-
-    lateinit var registerButton: MaterialButton
-    lateinit var toolbar: Toolbar
-
-    var preferences = MyPreferences()
-    var client: Client? = Client()
-
-    //Sucursales Supér Admin
-    var listaSucursales = mutableListOf<Sucursales>()
-    lateinit var sucursalTxt: AutoCompleteTextView
-    lateinit var sucursalTxtLayout: TextInputLayout
-    lateinit var viewProgressSucursal: View
-    lateinit var viewCurtainSucursal: View
-    lateinit var viewDotsSucursal: View
-
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+  //  private val _viewModelSucursales = ViewModelSucursales.getInstance()
+    private val viewModelClient: ClientViewModel by viewModels()
+    private lateinit var binding: ActivityRegistrarClienteBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
+    private var client: Client? = Client()
+    private val preferences = MyPreferences()
+    private val listaSucursales = mutableListOf<Sucursales>()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrarClienteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        getLastLocation()
-
-        //  fechaSelectedUnixtime = Date().time.toString()
-        nombres = binding.nombres
-        apellidos = binding.apellidos
-        dni = binding.dni
-        celular = binding.celular
-        registerButton = binding.registrarClientButton
-        toolbar = binding.tool.toolbar
-
-        layoutNombres = binding.nombresLayout
-        layoutApellidos = binding.apellidosLayout
-        layoutDNI = binding.dniLayout
-        layoutCelular = binding.celularLayout
-        layoutEdad = binding.edadLayout
-        celularReferencia = binding.celularReferenciaLayout
-        direccion = binding.direccionLayout
-        direccionReferencia = binding.direccionReferenciaLayout
-        ubicacion = binding.ubicacionLayout
-
-        //SuperAdmin
-        sucursalTxt = binding.edtSucursal
-        sucursalTxtLayout = binding.sucursalTxtInputLyt
-
-        viewProgressSucursal = binding.progressSucursal
-        viewDotsSucursal = binding.dotsSucursal
-        viewCurtainSucursal = binding.curtainSucursal
-
-        fieldsSuperAdmin()
-
-        //Set max lengh Document
-        dni.setMaxLength(resources.getInteger(R.integer.cantidad_documento_max))
-        layoutDNI.counterMaxLength = resources.getInteger(R.integer.cantidad_documento_max)
-
-        //get intent
-        //getExtras()
+        setupToolbar()
+        initView()
         validateFields()
-        setUpToolbarInitialize()
-        registerClient()
-        //Observers
-        startObservers()
+        setupObservers()
+        getLastLocation()
+        setupRegisterButton()
     }
 
+    private fun setupToolbar() {
+        binding.tool.toolbar.apply {
+            title = "Registrar"
+            setNavigationOnClickListener { finish() }
+        }
+    }
 
-    private fun fieldsSuperAdmin() {
+    private fun initView() {
+        binding.apply {
+            nombres.setMaxLength(resources.getInteger(R.integer.cantidad_documento_max))
+            dni.setMaxLength(resources.getInteger(R.integer.cantidad_documento_max))
+        }
+
         if (preferences.isSuperAdmin) {
-            sucursalTxtLayout.beVisible()
-            viewProgressSucursal.beVisible()
-            _viewModelSucursales.getSucursales()
-        }
-    }
-
-    private fun startObservers() {
-       // _viewModel.getMessage().observe(this) { message -> showMessage(message) }
-
-        _viewModelSucursales.sucursales.observe(this) {
-            if (it.isNotEmpty()) {
-                listaSucursales = it.toMutableList()
-                var scrsales = mutableListOf<String>()
-                it.forEach {
-                    scrsales.add(it.name ?: "")
-                }
-
-                val adapterSucursales = ArrayAdapter(this, R.layout.select_items, scrsales)
-                sucursalTxt.setAdapter(adapterSucursales)
-                sucursalTxt.setOnClickListener { sucursalTxt.showDropDown() }
-                sucursalTxtLayout.setEndIconOnClickListener { sucursalTxt.showDropDown() }
-
-                viewProgressSucursal.isVisible = false
-                viewDotsSucursal.isVisible = false
-                viewCurtainSucursal.isVisible = false
+            binding.apply {
+                sucursalTxtInputLyt.beVisible()
+                progressSucursal.beVisible()
+              //  _viewModelSucursales.getSucursales()
             }
         }
     }
 
-    private fun showMessage(message: String?) {
-        Snackbar.make(binding.root, "${message}", Snackbar.LENGTH_SHORT).show()
-    }
-
-    private fun setUpToolbarInitialize() {
-        toolbar.title = "Registrar"
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
-    }
-
-    private fun validateFields() {
-
-        nombres.doAfterTextChanged {
-
-            var nombresChanged = it.toString()
-
-            layoutNombres.error = when {
-                nombresChanged.isNullOrEmpty() -> "El nombre esta vacío"
-                nombresChanged.count() < 4 -> "El nombre esta incompleto"
-                else -> null
-            }
-            showbutton()
-
-        }
-
-        apellidos.doAfterTextChanged {
-
-            var apellidosChanged = it.toString()
-
-            layoutApellidos.error = when {
-                apellidosChanged.isNullOrEmpty() -> "Los apellidos estan vacíos"
-                apellidosChanged.count() < 4 -> "Los apellidos estan incompletos"
-                else -> null
-            }
-            showbutton()
-
-        }
-
+    private fun validateFields() = binding.apply {
+        nombres.doAfterTextChanged { updateFieldError(nombresLayout, it.toString(), 4) }
+        apellidos.doAfterTextChanged { updateFieldError(apellidosLayout, it.toString(), 4) }
         dni.doAfterTextChanged {
-
-            var doucmentoChanged = it.toString()
-            var documentoMax = resources.getInteger(R.integer.cantidad_documento_max)
-
-            layoutDNI.error = when {
-                doucmentoChanged.isNullOrEmpty() -> "${getString(R.string.documento_vacío)}"
-                doucmentoChanged.count() in 1 until documentoMax -> "${getString(R.string.documento_incompleto)}"
-                else -> null
-            }
-
-            showbutton()
-
+            updateFieldError(
+                dniLayout,
+                it.toString(),
+                resources.getInteger(R.integer.cantidad_documento_max)
+            )
         }
-
-        celular.doAfterTextChanged {
-
-            var celularChanged = it.toString()
-
-            layoutCelular.error = when {
-                celularChanged.isNullOrEmpty() -> "Celular vacío"
-                celularChanged.count() in 1..8 -> "Celular incompleto"
-                else -> null
-            }
-
-            showbutton()
-
-        }
-
-
+        celular.doAfterTextChanged { updateFieldError(celularLayout, it.toString(), 10) }
     }
 
-    private fun showbutton() {
 
-        if (!nombres.text.toString().trim().isNullOrEmpty() &&
-            nombres.text.toString().trim().count() >= 4 &&
-            !apellidos.text.toString().trim().isNullOrEmpty() &&
-            apellidos.text.toString().trim().count() >= 4 &&
-            !celular.text.toString().trim().isNullOrEmpty() &&
-            celular.text.toString().trim().count() == 10 &&
-            !dni.text.toString().trim().isNullOrEmpty() &&
-            dni.text.toString().trim()
-                .count() == resources.getInteger(R.integer.cantidad_documento_max)
-        // && !fecha.text.toString().trim().isNullOrEmpty()
-        ) {
-            //Registrar prestamo
-            registerButton.apply {
-                isEnabled = true
-                backgroundTintMode = PorterDuff.Mode.SCREEN
-                backgroundTintList = ContextCompat.getColorStateList(context, R.color.colorPrimary)
-                setTextColor(ContextCompat.getColor(context, R.color.white))
-            }
-        } else {
-            registerButton.apply {
-                isEnabled = false
-                backgroundTintMode = PorterDuff.Mode.MULTIPLY
-                backgroundTintList =
-                    ContextCompat.getColorStateList(context, R.color.color_input_text)
-                setTextColor(ContextCompat.getColor(context, R.color.color_input_text))
-            }
+    private fun updateFieldError(layout: TextInputLayout, text: String, minLength: Int) {
+        layout.error = when {
+            text.isEmpty() -> "${layout.hint} está vacío"
+            text.length < minLength -> "${layout.hint} está incompleto"
+            else -> null
+        }
+        updateRegisterButtonState()
+    }
 
+    private fun updateRegisterButtonState() {
+        binding.apply {
+            val isFormValid = !nombres.text.isNullOrEmpty() && nombres.text!!.length >= 4 &&
+                    !apellidos.text.isNullOrEmpty() && apellidos.text!!.length >= 4 &&
+                    !dni.text.isNullOrEmpty() && dni.text!!.length == resources.getInteger(R.integer.cantidad_documento_max) &&
+                    !celular.text.isNullOrEmpty() && celular.text!!.length == 10
+            registrarClientButton.isEnabled = isFormValid
         }
     }
 
-    private fun registerClient() = binding.apply {
-
-        registerButton.apply {
-
-            setOnClickListener {
-
-                hideKeyboardActivity(this@RegistrarClienteActivity)
-                isEnabled = false
-                binding.cortina.isVisible = true
-
-                with(client) {
-                    this?.nombres = nombres.text.toString().trim()
-                    this?.apellidos = apellidos.text.toString().trim()
-                    this?.dni = dni.text.toString().trim()
-                    this?.celular1 = celular.text.toString().trim()
-                    this?.celular2 = celular2.text.toString().trim()
-                    this?.edad = edad.text.toString().trim()
-                    this?.direccion = direccion1.text.toString().trim()
-                    this?.direccion2 = direccionReferencia.text.toString().trim()
+    private fun setupObservers() {
+       /* _viewModelSucursales.sucursales.observe(this) { sucursales ->
+            if (sucursales.isNotEmpty()) {
+                listaSucursales.clear()
+                listaSucursales.addAll(sucursales)
+                val sucursalNames = sucursales.map { it.name ?: "" }
+                val adapter = ArrayAdapter(this, R.layout.select_items, sucursalNames)
+                binding.edtSucursal.apply {
+                    setAdapter(adapter)
+                    setOnClickListener { showDropDown() }
                 }
-
-
-
-                var idSucursalSelected: Int = INT_DEFAULT
-
-                listaSucursales.forEach {
-                    if (it.name.equals(
-                            sucursalTxt.text.toString().trim()
-                        )
-                    ) idSucursalSelected = it.id ?: INT_DEFAULT
+                binding.sucursalTxtInputLyt.setEndIconOnClickListener { binding.edtSucursal.showDropDown() }
+                binding.apply {
+                    progressSucursal.isVisible = false
+                    dotsSucursal.isVisible = false
+                    curtainSucursal.isVisible = false
                 }
+            }
+        }*/
 
-                //Register ViewModel
-                //Actualizar el idSucursal para crear un prestamo como superAdmin
-             /*   client?.let {
-                    _viewModel.createClient(
-                        it,
-                        idSucursal = idSucursalSelected
-                    ) { isCorrect, msj, result, isRefresh ->
+        viewModelClient.message.observe(this) { message ->
+            message?.let { showMessage(it) }
+        }
 
-                        if (isCorrect) {
-                            //showMessage(msj)
-                            intent.putExtra("mensaje", msj)
-                            setResult(RESULT_OK, intent)
-                            finish()
+        viewModelClient.isLoading.observe(this) { isLoading ->
+            isLoading?.let {
+                binding.cortina.visibility = if (it) View.VISIBLE else View.GONE
+            }
+        }
 
-                        } else {
-                            binding.cortina.isVisible = false
-                            isEnabled = true
-                        }
-                    }
-                }*/
+        viewModelClient.success.observe(this) {
+           finish()
+        }
+    }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupRegisterButton() = binding.apply {
+        registrarClientButton.setOnClickListener {
+            hideKeyboardActivity(this@RegistrarClienteActivity)
+            curtainSucursal.isVisible = true
+
+            val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
+            client?.let {
+                it.createdAt = currentDate
+                it.name = binding.nombres.text.toString().trim()
+                it.lastName = binding.apellidos.text.toString().trim()
+                it.dni = binding.dni.text.toString().trim()
+                it.phone = binding.celular.text.toString().trim()
+                it.phone2 = binding.celular2.text.toString().trim()
+                it.age = binding.edad.text.toString().trim().toIntOrNull()
+                it.address = binding.direccion1.text.toString().trim()
+                it.address2 = binding.direccionReferencia.text.toString().trim()
+                it.occupation = "prueba"
+                it.businessName = "prueba"
+                it.branchId = 1L
+                it.score = 100
+                viewModelClient.onCreateClient(it)
             }
         }
     }
 
     private fun getLastLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             if (isLocationEnabled()) {
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        if (location != null) {
-                            val latitude = location.latitude
-                            val longitude = location.longitude
-                            Log.d("MainActivity", "Lat: $latitude, Lon: $longitude")
-                            client?.coordenada = "$latitude,$longitude"
-                            Toast.makeText(
-                                this,
-                                "Lat: $latitude, Lon: $longitude",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        } else {
-                            Log.d("MainActivity", "No se pudo obtener la ubicación.")
-                        }
-                    }
-                    .addOnFailureListener {
-                        Log.e("MainActivity", "Error al obtener la ubicación.")
-                    }
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        val latitude = it.latitude
+                        val longitude = it.longitude
+                        Log.d("MainActivity", "Lat: $latitude, Lon: $longitude")
+                        client?.coordinate = "$latitude,$longitude"
+                        Toast.makeText(this, "Lat: $latitude, Lon: $longitude", Toast.LENGTH_LONG)
+                            .show()
+                    } ?: Log.d("MainActivity", "No se pudo obtener la ubicación.")
+                }.addOnFailureListener {
+                    Log.e("MainActivity", "Error al obtener la ubicación.")
+                }
             } else {
                 promptEnableLocation()
             }
@@ -352,7 +219,6 @@ class RegistrarClienteActivity : AppCompatActivity() {
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }
-
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -374,17 +240,20 @@ class RegistrarClienteActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (isLocationEnabled()) {
                     getLastLocation()
                 } else {
                     promptEnableLocation()
                 }
             } else {
-                // Permiso denegado, manejar la negación de permisos
                 Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun showMessage(message: String?) {
+        Snackbar.make(binding.root, message.orEmpty(), Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
@@ -392,6 +261,4 @@ class RegistrarClienteActivity : AppCompatActivity() {
         ClientsViewModel.destroyInstance()
         super.onDestroy()
     }
-
 }
-

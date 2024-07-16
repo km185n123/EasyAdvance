@@ -1,8 +1,8 @@
-package com.paparazziapps.pretamistapp.modulos.dashboard.remote.providers
+package com.paparazziapps.pretamistapp.modulos.dashboard.remote.repository
 
 import com.paparazziapps.pretamistapp.helper.ResultData
 import com.paparazziapps.pretamistapp.modulos.dashboard.data.dto.ProfileDTO
 
-interface ProfileProvider {
+interface ProfileRepository {
     suspend fun getProfile(id: String): ResultData<ProfileDTO?>
 }

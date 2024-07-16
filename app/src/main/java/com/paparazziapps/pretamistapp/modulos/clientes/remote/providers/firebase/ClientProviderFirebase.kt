@@ -1,4 +1,4 @@
-package com.paparazziapps.pretamistapp.modulos.clientes.providers
+package com.paparazziapps.pretamistapp.modulos.clientes.remote.providers.firebase
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference

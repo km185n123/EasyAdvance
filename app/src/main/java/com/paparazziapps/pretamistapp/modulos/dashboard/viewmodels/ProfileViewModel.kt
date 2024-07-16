@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paparazziapps.pretamistapp.modulos.dashboard.data.dto.ProfileDTO
-import com.paparazziapps.pretamistapp.modulos.dashboard.repository.ProfileRepository
+import com.paparazziapps.pretamistapp.modulos.dashboard.remote.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,11 +30,11 @@ class ProfileViewModel @Inject constructor(
     init {
         val profileId = savedStateHandle.get<String>("profileId")
         profileId?.let {
-            getProfile(profileId = it)
+           // getProfile(profileId = it)
         }
     }
 
-    private fun getProfile(profileId: String) {
+    /*fun getProfile(profileId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
@@ -46,7 +46,7 @@ class ProfileViewModel @Inject constructor(
                 _isLoading.value = false
             }
         }
-    }
+    }*/
 
     private fun ProfileDTO.asDomainModel(): ProfileDTO {
         return ProfileDTO(

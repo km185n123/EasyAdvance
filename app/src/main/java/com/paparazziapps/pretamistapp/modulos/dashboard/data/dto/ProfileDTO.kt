@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProfileDTO(
-    @SerialName("id") val id: String,
-    @SerialName("created_at") val createdAt: String,
-    @SerialName("name") val name: String,
+    @SerialName("id") val id: String? = null,
+    @SerialName("created_at") val createdAt: String? = null,
+    @SerialName("name") val name: String? = null,
     @SerialName("last_name") val lastName: String,
     @SerialName("active_user") val activeUser: Boolean,
-    @SerialName("id_rol") val idRol: Long,
-    @SerialName("location") val location: String,
-    @SerialName("location_status") val locationStatus: Boolean
+    @SerialName("id_rol") val idRol: Long? = null,
+    @SerialName("location") val location: String? = null,
+    @SerialName("location_status") val locationStatus: Boolean? = null,
 )

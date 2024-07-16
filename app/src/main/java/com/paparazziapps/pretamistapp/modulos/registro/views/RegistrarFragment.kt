@@ -24,7 +24,7 @@ import com.paparazziapps.pretamistapp.helper.getDoubleWithTwoDecimalsReturnDoubl
 import com.paparazziapps.pretamistapp.helper.hideKeyboardFrom
 import com.paparazziapps.pretamistapp.helper.showMessageAboveBottomMenuGlobal
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
+import com.paparazziapps.pretamistapp.modulos.clientes.remote.providers.firebase.ClientProviderFirebase
 import com.paparazziapps.pretamistapp.modulos.clientes.views.adapter.ClientAdapter
 import com.paparazziapps.pretamistapp.modulos.registro.pojo.Credit
 import com.paparazziapps.pretamistapp.modulos.registro.viewmodels.ViewModelRegister

@@ -2,10 +2,28 @@ package com.paparazziteam.yakulap.helper.applicacion
 
 import android.graphics.Color
 import com.paparazziapps.pretamistapp.helper.INT_DEFAULT
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class MyPreferences {
 
     val prefs = CacheData()
+
+    inline fun <reified T : Any> saveObject(key: String, value: T) {
+        val jsonString = Json.encodeToString(value)
+        prefs.setString(key, jsonString)
+    }
+
+    inline fun <reified T> getObject(key: String): T? {
+        val jsonString = prefs.getString(key, "")
+        return jsonString.let {
+            Json.decodeFromString(it)
+        }
+    }
+
+
+
+
 
     //PREFERENCES STRING
     var email_login: String

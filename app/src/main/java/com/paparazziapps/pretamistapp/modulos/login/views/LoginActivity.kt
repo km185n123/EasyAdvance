@@ -20,6 +20,7 @@ import com.paparazziapps.pretamistapp.helper.hideKeyboardActivity
 import com.paparazziapps.pretamistapp.helper.isConnected
 import com.paparazziapps.pretamistapp.helper.isValidEmail
 import com.paparazziapps.pretamistapp.helper.setColorToStatusBar
+import com.paparazziapps.pretamistapp.modulos.dashboard.viewmodels.ProfileViewModel
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.SignInViewModel
 import com.paparazziapps.pretamistapp.modulos.principal.views.PrincipalActivity
 import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
@@ -61,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
         ingresarLoginButton.setOnClickListener {
             hideKeyboardActivity(this@LoginActivity)
             if (isConnected(applicationContext)) {
-                viewModelLogin.onSignIn(
+                viewModelLogin.signInAndFetchProfile(
                     email.text.toString().trim(),
                     pass.text.toString().trim()
                 )
@@ -86,8 +87,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        viewModelLogin.userSession.observe(this) { userSession ->
-            userSession?.let {
+        viewModelLogin.combinedLiveData.observe(this) { pair ->
+            val userSession = pair.first
+            val profile = pair.second
+
+            if (userSession != null && profile != null) {
+                MyPreferences().saveObject("profile", profile)
+                MyPreferences().saveObject("userSession", userSession)
+
                 Log.d(TAG, "EMAIL ENVIADO: ${binding.email.text.toString().lowercase()}")
                 startActivity(Intent(this, PrincipalActivity::class.java).apply {
                     putExtra("email", binding.email.text.toString().lowercase())

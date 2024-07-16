@@ -24,7 +24,7 @@ import com.paparazziapps.pretamistapp.databinding.ActivityRegistrarBinding
 import com.paparazziapps.pretamistapp.helper.*
 import com.paparazziapps.pretamistapp.helper.views.beVisible
 import com.paparazziapps.pretamistapp.modulos.clientes.pojo.Client
-import com.paparazziapps.pretamistapp.modulos.clientes.providers.ClientProviderFirebase
+import com.paparazziapps.pretamistapp.modulos.clientes.remote.providers.firebase.ClientProviderFirebase
 import com.paparazziapps.pretamistapp.modulos.clientes.views.adapter.ClientAdapter
 import com.paparazziapps.pretamistapp.modulos.login.data.model.pojo.Sucursales
 import com.paparazziapps.pretamistapp.modulos.login.viewmodels.ViewModelSucursales
@@ -34,7 +34,6 @@ import com.paparazziteam.yakulap.helper.applicacion.MyPreferences
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 class RegistrarActivity : AppCompatActivity() {
